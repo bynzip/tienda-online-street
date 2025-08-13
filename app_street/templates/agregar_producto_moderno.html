@@ -1,0 +1,123 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel - Productos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles_moderno.css' %}">
+</head>
+<body>
+  <div class="wrap">
+    <aside class="sidebar">
+      <div class="brand">STREET<span class="accent">.</span></div>
+      <nav>
+        <a href="{% url 'inicio' %}" class="active">Productos</a>
+        <a href="{% url 'exportar_productos' %}">Exportar Excel</a>
+      </nav>
+      <div class="sidebar-footer">Usuario • Panel</div>
+    </aside>
+
+    <main class="main">
+      <header class="main-header">
+        <h1>Agregar Producto</h1>
+        <div class="actions">
+          <a href="{% url 'exportar_productos' %}" class="btn btn-primary">📤 Exportar</a>
+
+        </div>
+      </header>
+
+      <section class="card">
+        {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+              <div class="msg {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Formulario de Agregar Producto -->
+        <form method="post" enctype="multipart/form-data" class="form-grid">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="add_product">
+          {{ form.non_field_errors }}
+          <div class="col">
+            <label>Nombre</label>
+            {{ form.nombre|add_class:"input" }}
+          </div>
+
+          <div class="col">
+            <label>Precio</label>
+            {{ form.precio|add_class:"input" }}
+          </div>
+
+          <div class="col">
+            <label>Descripcion</label>
+            {{ form.descripcion|add_class:"textarea" }}
+          </div>
+
+          <div class="col">
+            <label>Stock</label>
+            {{ form.stock|add_class:"input" }}
+          </div>
+
+          <div class="col">
+            <label>Color</label>
+            {{ form.color|add_class:"input" }}
+          </div>
+
+          <div class="col">
+            <label>Talla</label>
+            {{ form.talla|add_class:"input" }}
+          </div>
+
+          <div class="col">
+            <label>Categoria</label>
+            {{ form.categoria|add_class:"select" }}
+          </div>
+
+          <div class="col">
+            <label>Genero</label>
+            {{ form.genero|add_class:"select" }}
+          </div>
+
+          <div class="col">
+            <label>Temporada</label>
+            {{ form.temporada|add_class:"select" }}
+          </div>
+
+          <div class="col">
+            <label>Marca</label>
+            {{ form.marca|add_class:"select" }}
+          </div>
+
+          <div class="col-full">
+            <label>Imágenes</label>
+            <input type="file" name="imagenes" class="input" multiple>
+          </div>
+
+          <div class="col-full actions-row">
+            <button class="btn btn-primary" type="submit">Agregar Producto</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card mt-16">
+        <h3>Importar productos desde Excel</h3>
+        <form action="{% url 'importar_productos' %}" method="post" enctype="multipart/form-data" class="import-form">
+          {% csrf_token %}
+          <input type="file" name="archivo_excel" accept=".xlsx" required>
+          <div class="import-buttons">
+            <button type="submit" class="btn btn-success">📥 Importar Excel</button>
+            <a href="{% url 'exportar_productos' %}" class="btn btn-ghost">Descargar ejemplo</a>
+          </div>
+        </form>
+        <p class="note">Formato de columnas: <code>Nombre,Descripcion,Precio,Stock,Color,Talla,Categoria,Genero,Temporada,Marca</code></p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
