@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel - Productos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'app_street/css/style.css' %}">
+  <script src="{% static 'app_street/js/scripts.js' %}"></script>
+</head>
+<body>
+  <div class="contenedor-principal">
+    <!-- Barra lateral -->
+    <aside class="barra-lateral">
+      <div class="marca">STREET<span class="marca-destacado">.</span></div>
+      <nav class="navegacion">
+        <a href="#" class="navegacion-enlace activo">Productos</a>
+        <a href="#" class="navegacion-enlace">Exportar Excel</a>
+      </nav>
+      <div class="barra-lateral-pie">Usuario • Panel</div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="panel-grid">
+      <header class="encabezado">
+        <h1>Agregar Producto</h1>
+      </header>
+      <!-- Formulario de agregar producto -->
+      <section class="tarjeta cf" aria-label="Formulario para agregar producto">
+        <form method="post" enctype="multipart/form-data" id="product-form" class="formulario-contenedor">
+          {% csrf_token %}
+          <div class="formulario-campo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="entrada" required>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="sku">SKU</label>
+            <input type="text" name="sku" id="sku" class="entrada" required>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" class="entrada-textarea" required></textarea>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="precio_base">Precio</label>
+            <input type="number" id="precio_base" name="precio_base" class="entrada" step="0.01" min="0" required>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="tallas">Tallas (separadas por comas: S, M, L)</label>
+            <input type="text" id="tallas" name="tallas" class="entrada" required>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="stocks">Stocks (separados por comas: 10, 20, 15)</label>
+            <input type="text" id="stocks" name="stocks" class="entrada" required>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="categoria">Categoría</label>
+            <select id="categoria" name="categoria" class="seleccion" required>
+              <option value="">Selecciona una categoría</option>
+              {% for cat in categorias %}
+                <option value="{{ cat.id }}">{{ cat.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="genero">Género</label>
+            <select id="genero" name="genero" class="seleccion" required>
+              <option value="">Selecciona un género</option>
+              {% for gen in generos %}
+                <option value="{{ gen.id }}">{{ gen.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="temporada">Temporada</label>
+            <select id="temporada" name="temporada" class="seleccion" required>
+              <option value="">Selecciona una temporada</option>
+              {% for temp in temporadas %}
+                <option value="{{ temp.id }}">{{ temp.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="marca">Marca</label>
+            <select id="marca" name="marca" class="seleccion" required>
+              <option value="">Selecciona una marca</option>
+              {% for m in marcas %}
+                <option value="{{ m.id }}">{{ m.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="formulario-campo">
+            <label for="imagenes">Imagenes</label>
+            <input type="file" name="imagenes" id="imagen_producto" class="entrada" accept="image/*" multiple required>
+          </div>
+
+          <div class="formulario-campo">
+            <label for="agregar">Agregar</label>
+            <button type="submit" class="boton boton-primario">Agregar Producto</button>
+        </div>
+        </form>
+      </section>
+      
+      <section class="tarjeta productos">
+        <h3>Productos</h3>
+        <div class="formulario-campo">
+          <label for="marca">Modifica un Producto</label>
+          <select id="marca" name="marca" class="seleccion" required>
+            <option value="">Selecciona un producto</option>
+            {% for p in productos %}
+              <option value="{{ p.id }}">{{ p.id }} --- {{ p.nombre }} --- {{ p.precio_base }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="exel">
+          <a href="/export/" class="boton boton-transparente">Exportar Excel</a>
+          <form method="post" enctype="multipart/form-data" action="/import/" id="import-form">
+            {% csrf_token %}
+            <input type="file" name="excel_file entrada" accept=".xlsx" required>
+            <button type="submit" class="boton boton-exito">Importar Excel</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

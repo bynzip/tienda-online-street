@@ -1,57 +1,57 @@
 from django.contrib import admin
-from django.utils.html import format_html
-from .models import Categoria, Genero, Temporada, Marca, Producto, ImagenProducto
+from .models import (
+    Producto, Categoria, Genero, Temporada, Marca, 
+    Talla, ProductoTallaStock, ImagenProducto
+)
 
-class ImagenProductoInline(admin.TabularInline):
+# 1. Creamos un "Inline" para gestionar el stock por talla
+# Esto te permitirá añadir/editar/borrar tallas y stock desde la página del producto
+class ProductoTallaStockInline(admin.TabularInline):
+    model = ProductoTallaStock
+    extra = 1  # Cuántos campos vacíos para añadir nuevas tallas mostrar
+    autocomplete_fields = ['talla'] # Un buscador para las tallas, más cómodo
+
+# Otro Inline para las imágenes
+class ImagenProductoInline(admin.StackedInline):
     model = ImagenProducto
     extra = 1
-    readonly_fields = ('imagen_preview',)
 
-    def imagen_preview(self, obj):
-        if obj.url_imagen:
-            return format_html('<img src="{}" style="max-width: 150px; max-height: 150px;" />', obj.url_imagen)
-        return "No hay imagen"
-    imagen_preview.short_description = 'Vista Previa'
-
-
+# 2. Modificamos el ProductoAdmin
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'marca', 'categoria', 'precio', 'stock', 'talla', 'color')
-    list_filter = ('categoria', 'marca', 'genero', 'temporada', 'talla', 'color')
-    search_fields = ('nombre', 'descripcion', 'marca__nombre')
-    list_per_page = 25
-    inlines = [ImagenProductoInline]
-
-    fieldsets = (
-        (None, {
-            'fields': ('nombre', 'descripcion')
-        }),
-        ('Clasificación', {
-            'fields': ('categoria', 'genero', 'temporada', 'marca')
-        }),
-        ('Detalles del Producto', {
-            'fields': ('color', 'talla', 'precio', 'stock')
-        }),
+    # Campos que se mostrarán en la lista de productos
+    list_display = (
+        'sku', 
+        'nombre', 
+        'marca',
+        'precio_base', 
+        'en_oferta',
+        'precio_final', # El método @property funciona aquí directamente
+        'stock_total',  # Usaremos un método para mostrar el stock total
     )
+    # Filtros que aparecerán a la derecha
+    list_filter = ('marca', 'categoria', 'genero', 'en_oferta')
+    # Campos de búsqueda
+    search_fields = ('nombre', 'sku', 'marca__nombre')
+    # Añadimos los inlines
+    inlines = [ProductoTallaStockInline, ImagenProductoInline]
+
+    # Método para mostrar el stock total en el list_display
+    def stock_total(self, obj):
+        return obj.get_stock_total()
+    
+    # Ayuda a que la columna de stock total se pueda ordenar
+    stock_total.admin_order_field = 'stock_tallas__stock' 
+    stock_total.short_description = 'Stock Total'
 
 
-@admin.register(Categoria)
-class CategoriaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'descripcion')
-    search_fields = ('nombre',)
+# Registra los otros modelos para que aparezcan en el admin
+admin.site.register(Categoria)
+admin.site.register(Genero)
+admin.site.register(Temporada)
+admin.site.register(Marca)
 
-
-@admin.register(Marca)
-class MarcaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'pais_origen')
-    search_fields = ('nombre',)
-
-
-@admin.register(Genero)
-class GeneroAdmin(admin.ModelAdmin):
-    search_fields = ('nombre',)
-
-
-@admin.register(Temporada)
-class TemporadaAdmin(admin.ModelAdmin):
+@admin.register(Talla)
+class TallaAdmin(admin.ModelAdmin):
+    # Habilita un campo de búsqueda para el modelo Talla
     search_fields = ('nombre',)
