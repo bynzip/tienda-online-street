@@ -15,10 +15,10 @@
     <aside class="sidebar">
       <div class="brand">STREET<span class="accent">.</span></div>
       <nav>
-        <a href="{% url 'inicio' %}" class="active">Productos</a>
-        <a href="{% url 'exportar_productos' %}">Exportar Excel</a>
+        <a href="{% url 'inicio' %}" class="active">Agregar Productos</a>
+        <a href="{}">Ver Productos</a>
       </nav>
-      <div class="sidebar-footer">Usuario • Panel</div>
+      <div class="sidebar-footer">Admin • Panel</div>
     </aside>
 
     <main class="main">
@@ -112,7 +112,6 @@
           <input type="file" name="archivo_excel" accept=".xlsx" required>
           <div class="import-buttons">
             <button type="submit" class="btn btn-success">📥 Importar Excel</button>
-            <a href="{% url 'exportar_productos' %}" class="btn btn-ghost">Descargar ejemplo</a>
           </div>
         </form>
         <p class="note">Formato de columnas: <code>Nombre,Descripcion,Precio,Stock,Color,Talla,Categoria,Genero,Temporada,Marca</code></p>
