@@ -1,0 +1,251 @@
+/* Variables de color */
+:root {
+  --fondo: #0f1720;
+  --tarjeta: #0f1720;
+  --texto-muted: #95a0ab;
+  --acento: #6C63FF;
+  --exito: #2ecc71;
+  --texto-claro: #e6eef6;
+  --borde: rgba(255, 255, 255, 0.06);
+}
+
+/* Estilos generales */
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #071124 0%, #0f1720 100%);
+  color: var(--texto-claro);
+}
+
+/* Contenedor principal */
+.contenedor-principal {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Barra lateral */
+.barra-lateral {
+  width: 180px;
+  padding: 28px 18px;
+  background: linear-gradient(180deg, #07122a, #08121a);
+  border-right: 1px solid var(--borde);
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.marca {
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 18px;
+}
+
+.marca-destacado {
+  color: var(--acento);
+}
+
+.navegacion-enlace {
+  display: block;
+  color: var(--texto-muted);
+  padding: 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  margin: 6px 0;
+}
+
+.navegacion-enlace.activo,
+.navegacion-enlace:hover {
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+}
+
+.barra-lateral-pie {
+  color: var(--texto-muted);
+  font-size: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+/* Panel Grid (Contenido principal) */
+.panel-grid {
+  display: grid;
+  flex: 1; /* 2. Para que ocupe el espacio restante junto a la barra lateral */
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto 1fr auto; /* 1. Corregido: sin comas y con tamaños más flexibles */
+  gap: 10px;
+  padding: 28px;
+  grid-template-areas: 
+    "header header header"
+    "form form productos"
+    "form form productos"
+}
+
+.encabezado {
+  align-items: center;
+  margin-bottom: 12px;
+  grid-area: header;
+}
+.cf{
+  grid-area: form;
+}
+.mensajes-contenedor{
+  grid-area: mensaje;
+}
+.productos{
+  grid-area: productos;
+}
+.mt-16{
+  grid-area: exel;
+}
+
+.encabezado h1 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 28px;
+}
+
+.acciones .boton {
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+/* Estilos de botones */
+.boton {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid var(--borde);
+  color: var(--texto-claro);
+  padding: 8px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton-primario {
+  background: linear-gradient(90deg, var(--acento), #5b5bff);
+  border: none;
+}
+
+.boton-transparente {
+  border: 1px dashed var(--borde);
+}
+
+.boton-exito {
+  background: linear-gradient(90deg, #21c07a, #17a75e);
+  border: none;
+}
+
+/* Tarjetas */
+.tarjeta {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 6px 30px rgba(2, 6, 23, 0.6);
+  /* width: 750px; <- Es mejor que el grid controle el ancho */
+}
+
+/* Formulario */
+.formulario-contenedor {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 12px;
+  width: 100%;
+}
+
+.formulario-campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.formulario-campo-completo {
+  grid-column: 1 / -1;
+}
+
+label {
+  font-size: 11px;
+  color: var(--texto-muted);
+  margin-bottom: 6px;
+}
+
+.entrada,
+.entrada-textarea,
+.seleccion {
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--borde);
+  color: var(--texto-claro);
+}
+
+.entrada-textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.seleccion {
+  appearance: none;
+}
+
+.seleccion option {
+  background-color: #1a2433;
+  color: var(--texto-claro);
+}
+
+.seleccion:focus,
+.entrada:focus,
+.entrada-textarea:focus {
+  outline: none;
+  border-color: var(--acento);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.acciones-fila {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Formulario de importar */
+.formulario-importar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.botones-importar {
+  display: flex;
+  gap: 8px;
+}
+
+.nota {
+  color: var(--texto-muted);
+  font-size: 13px;
+  margin-top: 10px;
+}
+#exel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: auto;
+  height: 50px;
+}
+
+
+/* Estilos responsivos */
+@media (max-width: 900px) {
+  .formulario-contenedor {
+    grid-template-columns: 1fr;
+  }
+  .barra-lateral {
+    display: none;
+  }
+  .panel-grid {
+    padding: 16px;
+  }
+}
