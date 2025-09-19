@@ -7,7 +7,6 @@
   <title>Panel - Productos</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'app_street/css/style.css' %}">
-  <script src="{% static 'app_street/js/scripts.js' %}"></script>
 </head>
 <body>
   <div class="contenedor-principal">
@@ -20,46 +19,42 @@
       </nav>
       <div class="barra-lateral-pie">Usuario • Panel</div>
     </aside>
-
+    
     <!-- Contenido principal -->
     <main class="panel-grid">
-      <header class="encabezado">
-        <h1>Agregar Producto</h1>
-      </header>
       <!-- Formulario de agregar producto -->
-      <section class="tarjeta cf" aria-label="Formulario para agregar producto">
+      <header class="encabezado">
+        <h1>Panel - Productos</h1>
+      </header>
+
+      <section class="tarjeta formulario-agregar">
+        <h3>Agregar Producto</h3>
         <form method="post" enctype="multipart/form-data" id="product-form" class="formulario-contenedor">
           {% csrf_token %}
           <div class="formulario-campo">
             <label for="nombre">Nombre</label>
             <input type="text" id="nombre" name="nombre" class="entrada" required>
           </div>
-
           <div class="formulario-campo">
             <label for="sku">SKU</label>
             <input type="text" name="sku" id="sku" class="entrada" required>
           </div>
-
-          <div class="formulario-campo">
+          <div class="formulario-campo formulario-campo-completo">
             <label for="descripcion">Descripción</label>
             <textarea id="descripcion" name="descripcion" class="entrada-textarea" required></textarea>
           </div>
-
+          <div class="formulario-campo">
+            <label for="tallas">Tallas (S, M, L)</label>
+            <input type="text" id="tallas" name="tallas" class="entrada" placeholder="S, M, L" required>
+          </div>
+          <div class="formulario-campo">
+            <label for="stocks">Stocks (10, 20, 15)</label>
+            <input type="text" id="stocks" name="stocks" class="entrada" placeholder="10, 20, 15" required>
+          </div>
           <div class="formulario-campo">
             <label for="precio_base">Precio</label>
             <input type="number" id="precio_base" name="precio_base" class="entrada" step="0.01" min="0" required>
           </div>
-
-          <div class="formulario-campo">
-            <label for="tallas">Tallas (separadas por comas: S, M, L)</label>
-            <input type="text" id="tallas" name="tallas" class="entrada" required>
-          </div>
-
-          <div class="formulario-campo">
-            <label for="stocks">Stocks (separados por comas: 10, 20, 15)</label>
-            <input type="text" id="stocks" name="stocks" class="entrada" required>
-          </div>
-
           <div class="formulario-campo">
             <label for="categoria">Categoría</label>
             <select id="categoria" name="categoria" class="seleccion" required>
@@ -69,7 +64,6 @@
               {% endfor %}
             </select>
           </div>
-
           <div class="formulario-campo">
             <label for="genero">Género</label>
             <select id="genero" name="genero" class="seleccion" required>
@@ -79,7 +73,6 @@
               {% endfor %}
             </select>
           </div>
-
           <div class="formulario-campo">
             <label for="temporada">Temporada</label>
             <select id="temporada" name="temporada" class="seleccion" required>
@@ -89,7 +82,6 @@
               {% endfor %}
             </select>
           </div>
-
           <div class="formulario-campo">
             <label for="marca">Marca</label>
             <select id="marca" name="marca" class="seleccion" required>
@@ -99,40 +91,82 @@
               {% endfor %}
             </select>
           </div>
-          
           <div class="formulario-campo">
-            <label for="imagenes">Imagenes</label>
-            <input type="file" name="imagenes" id="imagen_producto" class="entrada" accept="image/*" multiple required>
+            <label for="imagenes">Imágenes</label>
+            <div class="archivo-input-container">
+              <input type="file" name="imagenes" id="imagen_producto" class="archivo-input" accept="image/*" multiple required>
+              <div class="archivo-input-display">
+                <span class="archivo-icono">📁</span>
+                <span>Seleccionar imágenes...</span>
+              </div>
+            </div>
           </div>
-
-          <div class="formulario-campo">
-            <label for="agregar">Agregar</label>
-            <button type="submit" class="boton boton-primario">Agregar Producto</button>
-        </div>
+          <div class="formulario-campo formulario-campo-completo">
+            <button id="btn-agregar" type="submit" class="boton boton-primario">Agregar Producto</button>
+          </div>
         </form>
       </section>
-      
-      <section class="tarjeta productos">
-        <h3>Productos</h3>
-        <div class="formulario-campo">
-          <label for="marca">Modifica un Producto</label>
-          <select id="marca" name="marca" class="seleccion" required>
-            <option value="">Selecciona un producto</option>
-            {% for p in productos %}
-              <option value="{{ p.id }}">{{ p.id }} --- {{ p.nombre }} --- {{ p.precio_base }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="exel">
-          <a href="/export/" class="boton boton-transparente">Exportar Excel</a>
-          <form method="post" enctype="multipart/form-data" action="/import/" id="import-form">
+      <!-- Barra derecha -->
+      <div class="barra-derecha">
+        <!-- Sección Editar -->
+        <section class="tarjeta seccion-editar">
+          <h3>Editar Producto</h3>
+          <form method="post" enctype="multipart/form-data" id="edit-form">
             {% csrf_token %}
-            <input type="file" name="excel_file entrada" accept=".xlsx" required>
-            <button type="submit" class="boton boton-exito">Importar Excel</button>
+            <div class="formulario-campo">
+              <label for="producto-editar">Seleccionar Producto</label>
+              <select id="producto-editar" name="producto-editar" class="seleccion">
+                <option value="">Selecciona un producto</option>
+                {% for p in productos %}
+                  <option value="{{ p.id }}">{{ p.nombre }} --- {{ p.precio_base }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="seccion-descuento">
+              <div class="label-grupo">En oferta / Descuento (%)</div>
+              <div class="controles-descuento">
+                <div class="checkbox-container">
+                  <input type="checkbox" id="en-oferta" name="en-oferta" class="checkbox-custom">
+                  <label for="en-oferta" class="checkbox-label"></label>
+                </div>
+                <div class="descuento-input">
+                  <input type="number" id="porcentaje-descuento" name="porcentaje-descuento" class="entrada" min="0" max="100" step="1" placeholder="0">
+                </div>
+              </div>
+            </div>
+            <div class="formulario-campo formulario-campo-completo">
+              <label>Precio Final</label>
+              <input type="text" id="precio-final" class="entrada precio-final" readonly placeholder="$159.99" value="$159.99">
+            </div>
+            <div class="grupo-botones">
+              <button type="button" class="boton boton-advertencia" id="btn-editar">Editar Producto</button>
+              <button type="button" class="boton boton-peligro" id="btn-eliminar">Eliminar</button>
+            </div>
           </form>
-        </div>
-      </section>
+        </section>
+        <!-- Sección Excel -->
+        <section class="tarjeta seccion-excel">
+          <h3>Gestión Excel</h3>
+          <div class="formulario-importar">
+            <form method="post" enctype="multipart/form-data" action="/import/" id="import-form">
+              {% csrf_token %}
+              <div class="archivo-input-container formulario-campo-completo">
+                <input type="file" name="excel_file" id="excel-input" class="archivo-input" accept=".xlsx,.xls">
+                <div class="archivo-input-display">
+                  <span class="archivo-icono">📊</span>
+                  <span>Seleccionar archivo Excel...</span>
+                </div>
+              </div>
+              <div class="grupo-botones">
+                <a href="/export/" class="boton boton-transparente" id="btn-exportar">Exportar</a>
+                <button type="submit" class="boton boton-exito" id="btn-importar">Importar</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
     </main>
   </div>
+  <script src="{% static 'app_street/js/scripts.js' %}"></script>
 </body>
 </html>
