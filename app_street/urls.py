@@ -7,7 +7,7 @@ router = DefaultRouter()
 router.register(r'productos', ProductViewSet, basename='product')
 
 urlpatterns = [
-    path('', views.inicio, name = "inicio"),
+    path('', views.administrador, name = "administrador"),
     path('api/', include(router.urls)),
     path('export/', views.ProductExportView.as_view(), name='product-export'),
     path('import/', views.ProductImportView.as_view(), name='product-import'),

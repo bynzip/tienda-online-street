@@ -575,3 +575,71 @@ textarea:-webkit-autofill:active {
 .checkbox-label {
   transition: opacity 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
+
+/* ============================================= */
+/* == ESTILOS PARA EL BUSCADOR DE PRODUCTOS == */
+/* ============================================= */
+
+.buscador-contenedor {
+  /* Permite que el div de resultados se posicione correctamente */
+  position: relative;
+}
+
+.resultados-busqueda {
+  /* Por defecto, la lista de resultados está oculta */
+  display: none; 
+  
+  /* Se posiciona justo debajo del input de búsqueda */
+  position: absolute;
+  top: 100%; /* Justo al terminar el input */
+  left: 0;
+  right: 0;
+  
+  /* Estilos visuales consistentes con tu diseño */
+  background-color: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-top: none; /* Evita doble borde con el input */
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+
+  /* Controla el tamaño y scroll si hay muchos resultados */
+  max-height: 250px;
+  overflow-y: auto;
+  
+  /* Asegura que aparezca por encima de otros elementos */
+  z-index: 1000; 
+}
+
+/* Clase que añadiremos con JS para mostrar los resultados */
+.resultados-busqueda.activo {
+  display: block;
+}
+
+/* Estilo para cada item en la lista de resultados */
+.resultado-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--texto-claro);
+  transition: background-color 0.2s ease;
+}
+
+.resultado-item:not(:last-child) {
+  border-bottom: 1px solid var(--borde);
+}
+
+.resultado-item:hover {
+  background-color: var(--hover);
+  color: var(--acento);
+}
+
+/* Estilo para un mensaje tipo "No se encontraron resultados" */
+.resultado-item.no-results {
+  cursor: default;
+  color: var(--texto-muted);
+  font-style: italic;
+}
+.resultado-item.no-results:hover {
+  background-color: transparent;
+  color: var(--texto-muted);
+}

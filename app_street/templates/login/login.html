@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - Panel Street</title>
+  <link rel="stylesheet" href="{% static 'app_street/css/style.css' %}">
+  <style>
+    /* Estilos adicionales específicos para la página de login */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .login-header .marca {
+      font-size: 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="marca">STREET<span class="marca-destacado">.</span></div>
+    </div>
+
+    <section class="tarjeta">
+      <h3>Acceso al Panel</h3>
+      <form method="post" class="formulario-contenedor" style="grid-template-columns: 1fr;">
+        {% csrf_token %}
+
+        <!-- Renderizamos el formulario que Django nos pasa -->
+        <div class="formulario-campo">
+          <label for="id_username">Usuario</label>
+          {{ form.username }}
+        </div>
+        <div class="formulario-campo">
+          <label for="id_password">Contraseña</label>
+          {{ form.password }}
+        </div>
+
+        <!-- Manejo de errores que Django envía -->
+        {% if form.errors %}
+          <div class="formulario-campo" style="color: var(--peligro); font-size: 13px;">
+            <p>Tu usuario y contraseña no coinciden. Por favor, inténtalo de nuevo.</p>
+          </div>
+        {% endif %}
+
+        <div class="formulario-campo">
+          <button type="submit" class="boton boton-primario">Iniciar Sesión</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</body>
+</html>

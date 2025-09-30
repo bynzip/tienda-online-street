@@ -113,15 +113,14 @@
           <h3>Editar Producto</h3>
           <form method="post" enctype="multipart/form-data" id="edit-form">
             {% csrf_token %}
-            <div class="formulario-campo">
-              <label for="producto-editar">Seleccionar Producto</label>
-              <select id="producto-editar" name="producto-editar" class="seleccion">
-                <option value="">Selecciona un producto</option>
-                {% for p in productos %}
-                  <option value="{{ p.id }}">{{ p.nombre }} --- {{ p.precio_base }}</option>
-                {% endfor %}
-              </select>
-            </div>
+              <div class="formulario-campo">
+                <label for="buscador-producto">Buscar Producto para Editar</label>
+                <div class="buscador-contenedor">
+                  <input type="text" id="buscador-producto" name="buscador-producto" class="entrada" placeholder="Buscar por nombre, SKU, marca..." autocomplete="off">
+                  <div id="resultados-busqueda" class="resultados-busqueda">
+                  </div>
+                </div>
+              </div>
             <div class="seccion-descuento">
               <div class="label-grupo">En oferta / Descuento (%)</div>
               <div class="controles-descuento">
