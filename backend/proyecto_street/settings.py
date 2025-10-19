@@ -118,7 +118,7 @@ LOGIN_REDIRECT_URL = '/'
 # Después de cerrar sesión, el usuario vuelve a la página de login.
 LOGOUT_REDIRECT_URL = 'login'
 
-
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True 
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
