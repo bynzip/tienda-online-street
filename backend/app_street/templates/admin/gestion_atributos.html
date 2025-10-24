@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Atributos - Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app_street/css/atributos.css' %}">
+  </head>
+<body>
+    <div class="contenedor-principal">
+
+        <aside class="barra-lateral">
+            <div class="marca">STREET<span class="marca-destacado">.</span></div>
+            <nav class="navegacion">
+                <a href="{% url 'administrador' %}" class="navegacion-enlace">Productos</a>
+                <a href="{% url 'gestion_atributos' %}" class="navegacion-enlace activo">GESTION DE ATRIBUTOS</a>
+            </nav>
+            <div class="barra-lateral-pie">Usuario • Panel</div>
+        </aside>
+
+        <main class="panel-contenido-atributos">
+            <header class="encabezado">
+                <h1>Gestión de Atributos</h1>
+                <p>Panel administrativo de atributos del catálogo de productos</p> </header>
+
+            <div class="atributos-grid">
+
+                <div class="tarjeta atributo-card"> <h2>Categorías</h2>
+                    <form class="add-form" data-endpoint="categorias">
+                        <input type="text" class="entrada" placeholder="Nombre de la nueva categoría" required>
+                        <button type="submit" class="boton boton-primario">Añadir</button>
+                    </form>
+                    <ul class="attribute-list" data-endpoint="categorias">
+                        {% for item in categorias %}
+                        <li>
+                            <span>{{ item.nombre }}</span>
+                            <button class="boton boton-peligro delete-btn" data-id="{{ item.id }}">Eliminar</button> </li>
+                        {% empty %}
+                        <li class="empty-list">No hay categorías.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="tarjeta atributo-card">
+                    <h2>Marcas</h2>
+                    <form class="add-form" data-endpoint="marcas">
+                        <input type="text" class="entrada" placeholder="Nombre de la nueva marca" required>
+                        <button type="submit" class="boton boton-primario">Añadir</button>
+                    </form>
+                    <ul class="attribute-list" data-endpoint="marcas">
+                        {% for item in marcas %}
+                        <li>
+                            <span>{{ item.nombre }}</span>
+                            <button class="boton boton-peligro delete-btn" data-id="{{ item.id }}">Eliminar</button>
+                        </li>
+                        {% empty %}
+                        <li class="empty-list">No hay marcas.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                 <div class="tarjeta atributo-card">
+                    <h2>Tallas</h2>
+                    <form class="add-form" data-endpoint="tallas">
+                        <input type="text" class="entrada" placeholder="Nombre de la nueva talla" required>
+                        <button type="submit" class="boton boton-primario">Añadir</button>
+                    </form>
+                    <ul class="attribute-list" data-endpoint="tallas">
+                        {% for item in tallas %}
+                        <li>
+                            <span>{{ item.nombre }}</span>
+                            <button class="boton boton-peligro delete-btn" data-id="{{ item.id }}">Eliminar</button>
+                        </li>
+                        {% empty %}
+                        <li class="empty-list">No hay tallas.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                 <div class="tarjeta atributo-card">
+                    <h2>Géneros</h2>
+                    <form class="add-form" data-endpoint="generos">
+                        <input type="text" class="entrada" placeholder="Nombre del nuevo género" required>
+                        <button type="submit" class="boton boton-primario">Añadir</button>
+                    </form>
+                    <ul class="attribute-list" data-endpoint="generos">
+                        {% for item in generos %}
+                        <li>
+                            <span>{{ item.nombre }}</span>
+                            <button class="boton boton-peligro delete-btn" data-id="{{ item.id }}">Eliminar</button>
+                        </li>
+                        {% empty %}
+                        <li class="empty-list">No hay géneros.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                 <div class="tarjeta atributo-card">
+                    <h2>Temporadas</h2>
+                    <form class="add-form" data-endpoint="temporadas">
+                        <input type="text" class="entrada" placeholder="Nombre de la nueva temporada" required>
+                        <button type="submit" class="boton boton-primario">Añadir</button>
+                    </form>
+                    <ul class="attribute-list" data-endpoint="temporadas">
+                        {% for item in temporadas %}
+                        <li>
+                            <span>{{ item.nombre }}</span>
+                            <button class="boton boton-peligro delete-btn" data-id="{{ item.id }}">Eliminar</button>
+                        </li>
+                        {% empty %}
+                        <li class="empty-list">No hay temporadas.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div> </main> </div> <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        const API_URL = '/api/';
+
+        document.querySelectorAll('.add-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const endpoint = e.target.dataset.endpoint;
+                const input = e.target.querySelector('.entrada');
+                const nombre = input.value;
+                const button = e.target.querySelector('button');
+                button.disabled = true; // Deshabilitar botón
+
+                try {
+                    const response = await fetch(`${API_URL}${endpoint}/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                        body: JSON.stringify({ nombre: nombre })
+                    });
+                    if (response.ok) { location.reload(); }
+                    else { alert('Error al crear. ¿Ya iniciaste sesión?'); button.disabled = false; }
+                } catch (err) { alert('Error de conexión.'); button.disabled = false; }
+            });
+        });
+
+        document.querySelectorAll('.attribute-list').forEach(list => {
+            list.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('delete-btn')) {
+                    if (!confirm('¿Seguro que quieres eliminar?')) return;
+
+                    const button = e.target;
+                    button.disabled = true; // Deshabilitar botón
+                    const endpoint = list.dataset.endpoint;
+                    const id = button.dataset.id;
+
+                    try {
+                        const response = await fetch(`${API_URL}${endpoint}/${id}/`, {
+                            method: 'DELETE',
+                            headers: { 'X-CSRFToken': csrftoken }
+                        });
+                        if (response.ok) { location.reload(); }
+                        else { alert('Error al eliminar. ¿Ya iniciaste sesión?'); button.disabled = false; }
+                    } catch (err) { alert('Error de conexión.'); button.disabled = false; }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

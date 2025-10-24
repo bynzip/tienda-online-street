@@ -1,3 +1,4 @@
+/* backend/app_street/static/css/gestion_atributos.css */
 /* Variables de color - Paleta inspirada en Binance */
 :root {
   --fondo: #0e0f13;
@@ -723,4 +724,118 @@ textarea:-webkit-autofill:active {
   justify-content: center;
   border: none;
   padding-top: 15px;
+}
+/* Layout específico para la página de atributos */
+.panel-contenido-atributos {
+  flex: 1; /* Ocupa el espacio restante */
+  padding: 0 28px; /* Padding lateral igual al panel principal */
+  overflow-y: auto; /* Permite scroll si el contenido es muy alto */
+}
+
+/* Encabezado dentro de la página de atributos */
+.panel-contenido-atributos .encabezado {
+  padding: 25px 0 15px 0; /* Espaciado superior e inferior */
+}
+.panel-contenido-atributos .encabezado h1 {
+  font-size: 1.8rem; /* Tamaño de título */
+  margin-bottom: 0.3rem;
+}
+.panel-contenido-atributos .encabezado p {
+  color: var(--texto-muted); /* Usa la variable de tu CSS principal */
+  font-size: 1rem;
+  margin-top: 0;
+}
+
+/* Grid para las tarjetas de atributos (2 COLUMNAS) */
+.atributos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* <<-- ESTO FUERZA LAS 2 COLUMNAS */
+  gap: 20px; /* Espacio entre tarjetas */
+  padding-bottom: 28px; /* Espacio al final */
+}
+
+/* Estilo adicional para la tarjeta en esta página */
+/* Hereda estilos de .tarjeta de tu style.css principal */
+.atributo-card {
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.atributo-card h2 {
+  color: var(--acento); /* Usa la variable de tu CSS principal */
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--borde); /* Usa la variable de tu CSS principal */
+  padding-bottom: 0.75rem;
+}
+
+/* Formulario para añadir dentro de la tarjeta */
+.atributo-card .add-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.atributo-card .add-form .entrada {
+  flex-grow: 1; /* El input ocupa el espacio disponible */
+  background-color: var(--fondo); /* Fondo oscuro del input */
+  border-color: var(--borde);
+}
+.atributo-card .add-form .boton-primario {
+  flex-shrink: 0; /* Evita que el botón se encoja */
+  padding: 0.8rem 1.3rem;
+}
+
+/* Lista de atributos existentes */
+.atributo-card .attribute-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 200px; /* Altura máxima antes de hacer scroll */
+  overflow-y: auto; /* Scroll si es necesario */
+  border-top: 1px solid var(--borde);
+  flex-grow: 1; /* Ocupa el espacio vertical restante */
+}
+
+.atributo-card .attribute-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5px;
+  border-bottom: 1px solid var(--borde);
+}
+.atributo-card .attribute-list li span {
+  word-break: break-all; /* Evita que texto largo desborde */
+  padding-right: 10px;
+  color: var(--texto-claro);
+  font-size: 14px;
+}
+.atributo-card .attribute-list li .delete-btn { /* Clase específica del botón eliminar */
+  padding: 5px 10px;
+  font-size: 13px;
+  flex-shrink: 0;
+  background-color: var(--peligro); /* Asegura el color rojo */
+}
+.atributo-card .attribute-list li .delete-btn:hover {
+  background-color: #d63f1c; /* Color hover específico */
+}
+
+.atributo-card .attribute-list li.empty-list {
+  color: var(--texto-muted);
+  font-style: italic;
+  justify-content: center;
+  border: none;
+  padding-top: 15px;
+}
+
+/* Ajuste responsive opcional: en pantallas muy pequeñas, pasa a 1 columna */
+@media (max-width: 768px) {
+  .atributos-grid {
+    grid-template-columns: 1fr; /* Una sola columna en móviles */
+  }
+  .panel-contenido-atributos {
+    padding: 0 16px; /* Menos padding lateral en móviles */
+  }
 }

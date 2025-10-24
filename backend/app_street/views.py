@@ -5,24 +5,24 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Producto, Categoria, Genero, Temporada, Marca, ProductoTallaStock, Talla
-from .serializers import ProductSerializer
+from .serializers import ProductoWriteSerializer # <-- ¡Correcto!
 from django.contrib.auth.decorators import login_required, user_passes_test
 import io
 from django.db import transaction
 
 class ProductExportView(APIView):
     def get(self, request):
-        # Usamos select_related para optimizar la consulta a la base de datos
-        productos = Producto.objects.select_related('categoria', 'genero', 'temporada', 'marca').all()
+        # 👇 LA CORRECCIÓN ESTÁ AQUÍ.
+        # Añadimos prefetch_related para cargar todos los stocks y tallas en solo 2 consultas adicionales.
+        productos = Producto.objects.select_related('categoria', 'genero', 'temporada', 'marca').prefetch_related('talla_stock__talla').all()
         data = []
 
         for producto in productos:
-            # Obtenemos tallas y stocks directamente
+            # Ahora esto no hace una nueva consulta a la BD, usa los datos ya cargados.
             talla_stocks = producto.talla_stock.all()
             tallas_str = ', '.join([ts.talla.nombre for ts in talla_stocks])
             stocks_str = ', '.join([str(ts.stock) for ts in talla_stocks])
 
-            # Construimos el diccionario manualmente para tener control total
             producto_data = {
                 'SKU': producto.sku,
                 'Nombre': producto.nombre,
@@ -30,7 +30,6 @@ class ProductExportView(APIView):
                 'Precio Base': producto.precio_base,
                 'En Oferta': 'Sí' if producto.en_oferta else 'No',
                 'Descuento Porcentaje': producto.descuento_porcentaje,
-                # Usamos los nombres de las relaciones, no los IDs
                 'Nombre Categoria': producto.categoria.nombre if producto.categoria else '',
                 'Nombre Genero': producto.genero.nombre if producto.genero else '',
                 'Nombre Temporada': producto.temporada.nombre if producto.temporada else '',
@@ -50,6 +49,8 @@ class ProductExportView(APIView):
         response['Content-Disposition'] = 'attachment; filename="productos_exportados.xlsx"'
         return response
 
+# --- El resto de tu código ya era correcto y robusto ---
+
 class ProductImportView(APIView):
     def post(self, request):
         if 'excel_file' not in request.FILES:
@@ -61,7 +62,6 @@ class ProductImportView(APIView):
         except Exception as e:
             return Response({"error": f"Error al leer el archivo Excel: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Nuevas columnas requeridas, usando nombres en lugar de IDs
         required_columns = ['SKU', 'Nombre', 'Precio Base', 'Tallas', 'Stocks', 'Nombre Categoria', 'Nombre Genero', 'Nombre Temporada', 'Nombre Marca']
         if not all(col in df.columns for col in required_columns):
             missing_cols = [col for col in required_columns if col not in df.columns]
@@ -72,13 +72,11 @@ class ProductImportView(APIView):
         try:
             with transaction.atomic():
                 for index, row in df.iterrows():
-                    # Usamos .get(col, '') para evitar errores si una celda está vacía
                     sku = str(row.get('SKU', '')).strip()
                     if not sku:
                         results["errors"].append(f"Fila {index + 2}: El SKU es obligatorio.")
                         continue
 
-                    # --- Validación y obtención de datos de la fila ---
                     tallas_str = str(row.get('Tallas', '')).strip()
                     stocks_str = str(row.get('Stocks', '')).strip()
                     
@@ -97,7 +95,6 @@ class ProductImportView(APIView):
                         results["errors"].append(f"Fila {index + 2}: Los Stocks deben ser números enteros positivos para el SKU {sku}.")
                         continue
 
-                    # --- Búsqueda por nombre en lugar de ID ---
                     try:
                         categoria = Categoria.objects.get(nombre__iexact=str(row.get('Nombre Categoria', '')).strip())
                         genero = Genero.objects.get(nombre__iexact=str(row.get('Nombre Genero', '')).strip())
@@ -107,14 +104,12 @@ class ProductImportView(APIView):
                         results["errors"].append(f"Fila {index + 2}: No se encontró un valor para '{e.model.__name__}' con el nombre proporcionado para el SKU {sku}.")
                         continue
                     
-                    # Validar tallas existentes
                     existing_tallas = Talla.objects.values_list('nombre', flat=True)
                     invalid_tallas = [t for t in tallas_list if t not in existing_tallas]
                     if invalid_tallas:
                         results["errors"].append(f"Fila {index + 2}: Tallas inválidas: {', '.join(invalid_tallas)} para el SKU {sku}.")
                         continue
 
-                    # Crear o actualizar el producto
                     producto, created = Producto.objects.update_or_create(
                         sku=sku,
                         defaults={
@@ -138,17 +133,13 @@ class ProductImportView(APIView):
                     else:
                         results["updated"] += 1
                 
-                # Si encontramos algún error durante el bucle, forzamos el rollback
                 if results["errors"]:
                     raise ValueError("Se encontraron errores de validación en el archivo.")
 
         except ValueError:
-            # La transacción ya se ha revertido gracias al raise.
-            # Devolvemos la lista de errores al usuario.
             return Response(results, status=status.HTTP_400_BAD_REQUEST)
         
         except Exception as e:
-            # Captura de cualquier otro error inesperado
             results["errors"].append(f"Ocurrió un error inesperado en el servidor: {str(e)}")
             return Response(results, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -177,3 +168,26 @@ def administrador(request):
         'tallas': tallas_disponibles,
     }
     return render(request, 'admin/admin.html', contexto)
+
+# --- 👇👇 AQUÍ ESTÁ LA NUEVA VISTA AÑADIDA 👇👇 ---
+
+@login_required
+@user_passes_test(es_superusuario)
+def gestion_atributos(request):
+    # Obtenemos todos los datos de la base de datos
+    categorias = Categoria.objects.all()
+    marcas = Marca.objects.all()
+    tallas = Talla.objects.all()
+    generos = Genero.objects.all()
+    temporadas = Temporada.objects.all()
+
+    # Los empaquetamos en un "contexto" para enviarlos al HTML
+    contexto = {
+        'categorias': categorias,
+        'marcas': marcas,
+        'tallas': tallas,
+        'generos': generos,
+        'temporadas': temporadas,
+    }
+    # Renderizamos el nuevo archivo HTML que vamos a crear
+    return render(request, 'admin/gestion_atributos.html', contexto)
