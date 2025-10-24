@@ -1,8 +1,4 @@
-from rest_framework import viewsets, permissions, filters, status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.contrib.auth import authenticate, login
-
+from rest_framework import viewsets, permissions, filters
 from .models import Producto, Categoria, Marca, Talla, Genero, Temporada
 from .serializers import (
     ProductoListSerializer,
@@ -59,22 +55,4 @@ class TemporadaViewSet(viewsets.ModelViewSet):
     queryset = Temporada.objects.all()
     serializer_class = TemporadaSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-# --- Vistas de API para Autenticación ---
-
-class LoginView(APIView):
-    """
-    Gestiona el inicio de sesión de los usuarios.
-    """
-    def post(self, request, *args, **kwargs):
-        username = request.data.get("username")
-        password = request.data.get("password")
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return Response({"message": f"Welcome back, {user.username}!"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"error": "Invalid credentials. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+    
