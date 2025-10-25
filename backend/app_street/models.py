@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
+from decimal import Decimal
 
 # --- Modelos de Clasificación ---
 
@@ -61,10 +62,15 @@ class Producto(models.Model):
     
     @property
     def precio_final(self):
-        if self.en_oferta and self.descuento_porcentaje > 0:
-            descuento = self.precio_base * (self.descuento_porcentaje / 100)
-            return round(self.precio_base - descuento, 2)
-        return self.precio_base
+        precio_base_decimal = Decimal(self.precio_base) if self.precio_base is not None else Decimal('0.00')
+
+        if self.en_oferta and self.descuento_porcentaje is not None and self.descuento_porcentaje > 0:
+            porcentaje_decimal = Decimal(self.descuento_porcentaje)
+            descuento = precio_base_decimal * (porcentaje_decimal / Decimal(100))
+            precio_calculado = (precio_base_decimal - descuento).quantize(Decimal("0.01"))
+            return max(precio_calculado, Decimal('0.00'))
+        return precio_base_decimal.quantize(Decimal("0.01"))
+
 
     def get_stock_total(self):
         total = ProductoTallaStock.objects.filter(producto=self).aggregate(total=models.Sum('stock'))['total']

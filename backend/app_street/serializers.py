@@ -6,11 +6,6 @@ from .models import (
     Producto, ProductoTallaStock, ImagenProducto
 )
 
-# ===================================================================
-# --- SERIALIZERS PARA LEER DATOS (GET) ---
-# Optimizados para MOSTRAR la información de manera limpia.
-# ===================================================================
-
 # --- Serializers de Clasificación ---
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,16 +47,13 @@ class ProductoTallaStockSerializer(serializers.ModelSerializer):
 
 # --- Serializer para Listas de Productos (Ligero) ---
 class ProductoListSerializer(serializers.ModelSerializer):
-    """
-    PARA MOSTRAR LISTAS DE PRODUCTOS (GET /api/productos/). Es rápido y ligero.
-    """
     marca = serializers.StringRelatedField()
     precio_final = serializers.ReadOnlyField()
     imagen_principal = serializers.SerializerMethodField()
 
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'marca', 'precio_final', 'en_oferta', 'imagen_principal']
+        fields = ['id', 'nombre', 'sku', 'marca', 'precio_final', 'en_oferta', 'imagen_principal']
 
     def get_imagen_principal(self, obj):
         imagen_obj = obj.imagenes.filter(principal=True).first()
@@ -73,9 +65,6 @@ class ProductoListSerializer(serializers.ModelSerializer):
 
 # --- Serializer para Detalle de un Producto (Completo) ---
 class ProductoDetailSerializer(serializers.ModelSerializer):
-    """
-    PARA MOSTRAR UN SOLO PRODUCTO CON TODO SU DETALLE (GET /api/productos/1/).
-    """
     # Muestra los nombres de las relaciones en lugar de los IDs
     categoria = serializers.StringRelatedField()
     genero = serializers.StringRelatedField()
@@ -99,16 +88,7 @@ class ProductoDetailSerializer(serializers.ModelSerializer):
             'stock_total', 'talla_stock', 'imagenes'
         ]
 
-# ===================================================================
-# --- SERIALIZER PARA ESCRIBIR DATOS (POST, PUT, PATCH) ---
-# Optimizado para CREAR Y ACTUALIZAR productos desde un formulario.
-# ===================================================================
-
 class ProductoWriteSerializer(serializers.ModelSerializer):
-    """
-    PARA CREAR Y ACTUALIZAR PRODUCTOS (POST, PUT, PATCH).
-    Acepta tallas y stocks como texto ("S,M,L") y los procesa.
-    """
     # Campos virtuales que solo se usan para escribir (write_only=True)
     tallas = serializers.CharField(write_only=True, required=True, help_text="Nombres de tallas separadas por comas (ej: S,M,L)")
     stocks = serializers.CharField(write_only=True, required=True, help_text="Stocks correspondientes separados por comas (ej: 10,20,15)")
@@ -132,7 +112,7 @@ class ProductoWriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         # Tu excelente lógica de validación, sin cambios.
-        tallas_list = [t.strip() for t in data['tallas'].split(',') if t.strip()]
+        tallas_list = [t.strip().upper() for t in data['tallas'].split(',') if t.strip()]
         stocks_list = [s.strip() for s in data['stocks'].split(',') if s.strip()]
 
         if len(tallas_list) != len(stocks_list):
@@ -202,9 +182,10 @@ class ProductoWriteSerializer(serializers.ModelSerializer):
             ProductoTallaStock.objects.create(producto=producto, talla=talla_obj, stock=stock_val)
 
         # Función auxiliar para crear imágenes
-        for i, imagen_file in enumerate(imagenes):
-            ImagenProducto.objects.create(
-                producto=producto,
-                imagen=imagen_file,
-                principal=(i == 0) # La primera imagen es la principal
-            )
+        if imagenes:
+            for i, imagen_file in enumerate(imagenes):
+                ImagenProducto.objects.create(
+                    producto=producto,
+                    imagen=imagen_file,
+                    principal=(i == 0) # La primera imagen es la principal
+                )

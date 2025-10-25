@@ -24,7 +24,6 @@ router.register(r'temporadas', TemporadaViewSet, basename='temporadas')
 urlpatterns = [
     # Rutas de vistas normales
     path('', views.administrador, name="administrador"),
-    
     path('gestion-atributos/', views.gestion_atributos, name='gestion_atributos'),
     
     path('export/', views.ProductExportView.as_view(), name='product-export'),

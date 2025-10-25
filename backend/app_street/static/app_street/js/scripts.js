@@ -6,13 +6,35 @@ document.addEventListener('DOMContentLoaded', function() {
   const checkboxOferta = document.getElementById('en-oferta');
   const inputDescuento = document.getElementById('porcentaje-descuento');
   const inputPrecioFinal = document.getElementById('precio-final');
+  const excelInput = document.getElementById('excel-input');
+  const btnImportar = document.getElementById('btn-importar');
+  const archivoDisplayExcel = excelInput.nextElementSibling;
+  const imagenInput = document.getElementById('imagen_producto');
+  const imagenDisplayDiv = imagenInput.parentElement.querySelector('.archivo-input-display'); // El div contenedor
+  const imagenDisplaySpan = imagenDisplayDiv.querySelector('span:last-child'); // El span que muestra el texto
 
   const buscadorProducto = document.getElementById('buscador-producto');
   const resultadosBusqueda = document.getElementById('resultados-busqueda');
 
   let estadoEditar = false;
   let productoActual = null;
-  let debounceTimer; // Para no saturar la API con búsquedas
+  let debounceTimer;
+
+  // Función para actualizar el estado del botón Importar
+  function actualizarEstadoBotonImportar() {
+    const hayArchivo = excelInput.files && excelInput.files.length === 1;
+    toggleElemento(btnImportar, hayArchivo);
+    if (hayArchivo) {
+        archivoDisplayExcel.querySelector('span:last-child').textContent = excelInput.files[0].name;
+    } else {
+        archivoDisplayExcel.querySelector('span:last-child').textContent = 'Seleccionar archivo Excel...';
+    }
+  }
+  // Añadir el listener al input de archivo
+  if (excelInput && btnImportar) {
+    excelInput.addEventListener('change', actualizarEstadoBotonImportar);
+    actualizarEstadoBotonImportar();
+  }
 
   // Función para habilitar/deshabilitar elementos
   function toggleElemento(elemento, habilitar) {
@@ -22,7 +44,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function seleccionarProducto(productoId) {
     if (!productoId) {
-      // Estado: No hay producto seleccionado (limpiar todo)
+      imagenDisplaySpan.textContent = 'Seleccionar imágenes...';
+      imagenInput.value = '';
       estadoEditar = false;
       productoActual = null;
       productForm.reset();
@@ -41,34 +64,76 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(res => res.json())
       .then(data => {
-        productoActual = data;
-        
-        // Rellenar el formulario principal con los datos del producto
+        productoActual = data; // Guarda el producto completo recibido
+
+        // Rellenar campos básicos (estos probablemente siguen igual)
         document.getElementById('nombre').value = data.nombre || '';
         document.getElementById('sku').value = data.sku || '';
         document.getElementById('descripcion').value = data.descripcion || '';
-        document.getElementById('tallas').value = data.tallas || '';
-        document.getElementById('stocks').value = data.stocks || '';
         document.getElementById('precio_base').value = data.precio_base || '';
-        document.getElementById('categoria').value = data.categoria || '';
-        document.getElementById('genero').value = data.genero || '';
-        document.getElementById('temporada').value = data.temporada || '';
-        document.getElementById('marca').value = data.marca || '';        
-        
-        // Rellenar el formulario de edición
+
+        // --- AJUSTES NECESARIOS ---
+
+        // 1. Procesar Tallas y Stocks desde data.talla_stock
+        if (data.talla_stock && Array.isArray(data.talla_stock)) {
+            const tallasArray = data.talla_stock.map(ts => ts.talla); // Extrae solo los nombres de talla
+            const stocksArray = data.talla_stock.map(ts => ts.stock); // Extrae solo los stocks
+            document.getElementById('tallas').value = tallasArray.join(', ') || ''; // Une los nombres con coma
+            document.getElementById('stocks').value = stocksArray.join(', ') || ''; // Une los stocks con coma
+        } else {
+            document.getElementById('tallas').value = ''; // Limpiar si no hay datos
+            document.getElementById('stocks').value = '';
+        }
+
+        // 2. Seleccionar las opciones correctas en los <select> usando el NOMBRE
+        // Función auxiliar para seleccionar opción por texto
+        const seleccionarOpcionPorTexto = (selectId, texto) => {
+            const selectElement = document.getElementById(selectId);
+            if (!selectElement || !texto) return; // Salir si no hay elemento o texto
+
+            // Recorre las opciones del select
+            for (let i = 0; i < selectElement.options.length; i++) {
+                // Compara el texto de la opción (ignorando mayúsculas/minúsculas y espacios extra)
+                if (selectElement.options[i].text.trim().toLowerCase() === texto.trim().toLowerCase()) {
+                    selectElement.value = selectElement.options[i].value; // Establece el VALOR (ID) de la opción encontrada
+                    break; // Termina el bucle una vez encontrada
+                }
+            }
+        };
+
+        const numImagenesExistentes = (data.imagenes && Array.isArray(data.imagenes)) ? data.imagenes.length : 0;
+
+        if (numImagenesExistentes > 0) {
+            imagenDisplaySpan.textContent = `${numImagenesExistentes} imágen${numImagenesExistentes > 1 ? 'es' : ''} asignada${numImagenesExistentes > 1 ? 's' : ''}.`;
+        } else {
+            imagenDisplaySpan.textContent = 'Seleccionar imágenes...'; // Mensaje por defecto
+        }
+        imagenInput.value = '';
+
+        // Usa la función auxiliar para cada select
+        seleccionarOpcionPorTexto('categoria', data.categoria);
+        seleccionarOpcionPorTexto('genero', data.genero);
+        seleccionarOpcionPorTexto('temporada', data.temporada);
+        seleccionarOpcionPorTexto('marca', data.marca);
+
+        // --- FIN DE AJUSTES ---
+
+        // Rellenar el formulario de edición (esto debería seguir funcionando)
+
         checkboxOferta.checked = data.en_oferta || false;
         inputDescuento.value = data.descuento_porcentaje || '';
-        
+
         // Finalmente, actualizamos toda la interfaz
-        actualizarEstados();
+        actualizarEstados(); // Llama a tu función existente para habilitar/deshabilitar campos
         console.log("Producto cargado:", data);
       })
       .catch(err => {
         console.error("Error cargando producto:", err);
-        alert("Error al cargar el producto");
+        alert("Error al cargar los detalles del producto. Revisa la consola.");
+        // Considera resetear el estado si falla la carga
+        seleccionarProducto(null); // Llama a la misma función con null para limpiar
       });
     }
-    
     actualizarEstados();
   }
 
@@ -189,6 +254,10 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    if (!document.getElementById("imagen_producto").value){
+      formData.delete('imagenes');
+    }
+
     fetch('/api/productos/', {
       method: 'POST',
       headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') },
@@ -264,6 +333,26 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('Error al eliminar el producto');
     });
   });
+
+  if (imagenInput && imagenDisplaySpan) {
+    imagenInput.addEventListener('change', function() {
+      const numArchivosSeleccionados = imagenInput.files ? imagenInput.files.length : 0;
+
+      if (numArchivosSeleccionados > 1) {
+        imagenDisplaySpan.textContent = `${numArchivosSeleccionados} archivos seleccionados`;
+      } else if (numArchivosSeleccionados === 1) {
+        imagenDisplaySpan.textContent = imagenInput.files[0].name; // Mostrar nombre del único archivo
+      } else {
+        // Si no se selecciona nada (o se cancela), mostrar info del producto actual si existe
+        if (productoActual && productoActual.imagenes && productoActual.imagenes.length > 0) {
+             const numExistentes = productoActual.imagenes.length;
+             imagenDisplaySpan.textContent = `${numExistentes} imágen${numExistentes > 1 ? 'es' : ''} asignada${numExistentes > 1 ? 's' : ''}. Selecciona nuevas para reemplazar.`;
+        } else {
+            imagenDisplaySpan.textContent = 'Seleccionar imágenes...'; // Mensaje por defecto
+        }
+      }
+    });
+  }
 
   // Inicializar estados al cargar la página
   actualizarEstados();

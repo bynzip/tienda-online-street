@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r9^3ka%f8)mxvv6cz*oq^*-0@bxxi&20eofb-^001@wuutvf^b'
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 
 # Application definition
@@ -56,6 +63,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -91,7 +99,26 @@ WSGI_APPLICATION = 'proyecto_street.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {   'default': {       'ENGINE': 'django.db.backends.postgresql',       'NAME': 'dabase-prueba-2',       'USER': 'admin',       'PASSWORD': '1234',       'HOST': 'localhost',       'PORT': '5432',   } }
+if 'DATABASE_URL' in os.environ:
+    # Configuración para PRODUCCIÓN (Render)
+    DATABASES = {
+        'default': dj_database_url.config(
+            conn_max_age=600, # Opcional: tiempo de vida de la conexión
+            ssl_require=True   # Opcional pero recomendado en Render para forzar SSL
+        )
+    }
+else:
+    # Configuración para DESARROLLO (tu PostgreSQL local)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'dabase-prueba-2',  # Tu BD local
+            'USER': 'admin',          # Tu usuario local
+            'PASSWORD': '1234',       # Tu contraseña local
+            'HOST': 'localhost',      # O la IP/host si no es local
+            'PORT': '5432',           # Puerto por defecto
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -137,7 +164,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+
 STATIC_URL = 'static/'
+# Directorio donde se copiarán los archivos estáticos para producción
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Añadir esto si aún no está
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Puedes ponerlo aquí o fuera del if
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -153,6 +188,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
 ]
-# 👇 AÑADE ESTAS DOS LÍNEAS
+
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = ['http://localhost:5173', 'http://127.0.0.1:5173']
