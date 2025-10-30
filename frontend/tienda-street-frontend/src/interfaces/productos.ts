@@ -5,9 +5,9 @@ export interface ITallaStock {
 }
 
 export interface IImagenProducto {
-    id: number;
-    imagen: string;
-    principal: boolean;
+  id: number;
+  imagen: string;
+  principal: boolean;
 }
 
 export interface IProductoLista {
@@ -17,7 +17,7 @@ export interface IProductoLista {
   marca: string;
   precio_final: string;
   en_oferta: boolean;
-  imagen_principal: string | null; 
+  imagen_principal: string | null;
 }
 
 export interface IProducto {
@@ -35,7 +35,7 @@ export interface IProducto {
   genero: string;
   temporada: string;
   marca: string;
-  
+
   stock_total: number;
 
   talla_stock: ITallaStock[];
