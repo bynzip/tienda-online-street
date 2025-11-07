@@ -10,7 +10,7 @@ export interface IImagenProducto {
   principal: boolean;
 }
 
-export interface IProductoLista {
+export interface IProductos {
   id: string;
   sku: string;
   nombre: string;
@@ -40,4 +40,16 @@ export interface IProducto {
 
   talla_stock: ITallaStock[];
   imagenes: IImagenProducto[];
+}
+
+export interface ICategoria {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+}
+
+export interface IMarcas {
+  id: string;
+  nombre: string;
+  pais_origen?: string | null;
 }

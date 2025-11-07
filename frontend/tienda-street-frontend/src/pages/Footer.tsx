@@ -1,38 +1,42 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useFetch } from '../api/useFetch.tsx';
+import type { ICategoria, IMarcas } from '../interfaces/productos.ts';
 import { InstagramIcon, TwitterIcon } from '../icons/SocialIcons.tsx';
 
 // Componente interno para manejar los enlaces del router
 const FooterLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-  <Link to={href} className="text-gray-400 transition-colors hover:text-white">
+  <Link to={href} className="text-gray-400 transition-colors hover:text-white text-sm">
     {children}
   </Link>
 );
 
 const Footer = () => {
+  const { data: categorias } = useFetch<ICategoria[]>('/api/categorias/');
+  const { data: marcas } = useFetch<IMarcas[]>('/api/marcas/');
+
   return (
-    <footer className="border-t border-gray-800 bg-gray-950 text-gray-300">
-      <div className="container mx-auto max-w-7xl px-4 py-12 md:px-6 lg:px-8">
+    <footer className="border-t border-gray-800 bg-black text-gray-300">
+      <div className="container mx-auto max-w-6xl px-4 py-12 md:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-4 ">
           {/* Columna 1: Categorías */}
-          <div className="grid gap-1">
+          <div className="grid gap-2">
             <h3 className="font-semibold text-white">Categorías</h3>
-            <FooterLink href="/productos?genero=Hombre">Hombres</FooterLink>
-            <FooterLink href="/productos?genero=Mujer">Mujeres</FooterLink>
-            <FooterLink href="/productos?genero=Niño">Niños</FooterLink>
-            <FooterLink href="/productos?categoria=Zapatillas">Zapatillas</FooterLink>
-            <FooterLink href="/productos?categoria=Ropa">Ropa</FooterLink>
+            {categorias?.map((categoria) => (
+              <FooterLink key={categoria.id} href={`/productos?categoria=${categoria.nombre}`}>
+                {categoria.nombre}
+              </FooterLink>
+            ))}
           </div>
 
           {/* Columna 2: Marcas Populares */}
           <div className="grid gap-2">
             <h3 className="font-semibold text-white">Marcas</h3>
-            <FooterLink href="/productos?marca=Jordan">Jordan</FooterLink>
-            <FooterLink href="/productos?marca=Nike">Nike</FooterLink>
-            <FooterLink href="/productos?marca=Supreme">Supreme</FooterLink>
-            <FooterLink href="/productos?marca=Essentials">Essentials</FooterLink>
-            <FooterLink href="/productos?marca=BAPE">BAPE</FooterLink>
-            <FooterLink href="/productos?marca=Adidas">Adidas</FooterLink>
+            {marcas?.map((marca) => (
+              <FooterLink key={marca.id} href={`/productos?marca=${marca.nombre}`}>
+                {marca.nombre}
+              </FooterLink>
+            ))}
           </div>
 
           {/* Columna 3: Información */}
