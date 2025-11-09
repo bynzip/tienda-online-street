@@ -15,8 +15,10 @@ export interface IProductos {
   sku: string;
   nombre: string;
   marca: string;
+  precio_base: string; // <-- AÑADIR ESTA LÍNEA
   precio_final: string;
   en_oferta: boolean;
+  descuento_porcentaje: number; // <-- AÑADIR ESTA LÍNEA
   imagen_principal: string | null;
 }
 
@@ -52,4 +54,13 @@ export interface IMarcas {
   id: string;
   nombre: string;
   pais_origen?: string | null;
+}
+
+export interface IGenero {
+  id: string;
+  nombre: string;
+}
+export interface ITemporada {
+  id: string;
+  nombre: string;
 }

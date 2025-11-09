@@ -68,8 +68,8 @@ class Producto(models.Model):
             porcentaje_decimal = Decimal(self.descuento_porcentaje)
             descuento = precio_base_decimal * (porcentaje_decimal / Decimal(100))
             precio_calculado = (precio_base_decimal - descuento).quantize(Decimal("0.01"))
-            return max(precio_calculado, Decimal('0.00'))
-        return precio_base_decimal.quantize(Decimal("0.01"))
+            return "{:.2f}".format(max(precio_calculado, Decimal('0.00')))
+        return "{:.2f}".format(precio_base_decimal.quantize(Decimal("0.01")))
 
 
     def get_stock_total(self):

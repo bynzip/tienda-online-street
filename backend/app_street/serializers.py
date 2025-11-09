@@ -53,7 +53,7 @@ class ProductoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'sku', 'marca', 'precio_final', 'en_oferta', 'imagen_principal']
+        fields = ['id', 'nombre', 'sku', 'marca', 'precio_base', 'precio_final', 'en_oferta', 'descuento_porcentaje', 'imagen_principal']
 
     def get_imagen_principal(self, obj):
         imagen_obj = obj.imagenes.filter(principal=True).first()

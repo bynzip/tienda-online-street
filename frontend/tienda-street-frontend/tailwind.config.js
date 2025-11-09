@@ -8,5 +8,5 @@ export default {
     theme: {
         extend: {},
     },
-    plugins: [],
+    plugins: ['clsx', require('@tailwindcss/aspect-ratio'),],
 }
