@@ -54,7 +54,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({ title, apiUrl,
   };
 
   return (
-    <section className="py-8 mx-4 sm:mx-6 lg:mx-8">
+    <section className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-1">
       {/* Header */}
       <div className="mb-4 flex items-baseline justify-between px-4 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
@@ -115,7 +115,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({ title, apiUrl,
                 productsToRender.map((producto) => (
                   <div
                     key={producto.id}
-                    className="flex-none h-full w-[180px] lg:w-[280px] snap-start"
+                    className="flex-none h-full w-[180px] lg:w-[228px] snap-start"
                   >
                     <ProductCard producto={producto} />
                   </div>

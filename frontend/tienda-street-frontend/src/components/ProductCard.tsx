@@ -57,7 +57,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
             <p className="text-[14px] font-semibold text-gray-900">S/ {producto.precio_final}</p>
           ) : (
             <>
-              <p className="text-[14px] font-semibold text-red-600">S/ {producto.precio_final}</p>
+              <p className="text-[14px] font-semibold text-gray-900">S/ {producto.precio_final}</p>
               <p className="text-[11px] text-gray-500 line-through">S/ {producto.precio_base}</p>
             </>
           )}
