@@ -72,7 +72,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
 
       {/* Descripción */}
       {producto.descripcion && (
-        <div className="border-t border-b border-gray-200 py-4">
+        <div className="border-t border-b border-gray-200 py-4 text-[13px] ">
           <p className="text-gray-700 leading-relaxed">{producto.descripcion}</p>
         </div>
       )}
@@ -96,7 +96,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
       </div>
 
       {/* Selector de tallas */}
-      <div className="space-y-3">
+      <div className="space-y-3 pt-3">
         <label className="block text-sm font-medium text-gray-900">
           Selecciona tu talla
           {tallaSeleccionada && (
