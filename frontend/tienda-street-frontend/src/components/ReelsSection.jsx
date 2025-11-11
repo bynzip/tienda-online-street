@@ -36,7 +36,7 @@ export default function ReelsSection() {
         {reelsData.map((reel) => (
           <div
             key={reel.id}
-            className="group relative aspect-[9/16] rounded-xl overflow-hidden cursor-pointer shadow-md transition-transform duration-300 hover:-translate-y-1"
+            className="group relative aspect-9/16 rounded-xl overflow-hidden cursor-pointer shadow-md transition-transform duration-300 hover:-translate-y-1"
             onClick={() => openModal(reel.src)}
           >
             <video src={reel.src} className="w-full h-full object-cover" muted loop playsInline />
@@ -49,7 +49,7 @@ export default function ReelsSection() {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-[9999] bg-black/95 flex justify-center items-center p-4" onClick={closeModal}>
+        <div className="fixed inset-0 z-9999 bg-black/95 flex justify-center items-center p-4" onClick={closeModal}>
           <div className="relative w-full max-w-md" onClick={(e) => e.stopPropagation()}>
             <button
               className="absolute -top-10 right-0 text-white text-4xl font-bold leading-none hover:text-gray-300"
