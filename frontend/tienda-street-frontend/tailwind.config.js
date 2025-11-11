@@ -1,12 +1,20 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-    // CONFIGURACIÓN CLAVE: Rutas de archivos donde usaremos clases de Tailwind
-    content: [
-        "./index.html",
-        "./src/**/*.{js,ts,jsx,tsx}",
-    ],
-    theme: {
-        extend: {},
+module.exports = {
+  theme: {
+    extend: {
+      fontFamily: {
+        'montserrat': ['Montserrat', 'sans-serif'],
+      },
+      keyframes: {
+        'scroll-left': {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        }
+      },
+      animation: {
+        'scroll-left': 'scroll-left 30s linear infinite',
+      }
     },
-    plugins: ['clsx', require('@tailwindcss/aspect-ratio'),],
+  },
+  plugins: [],
 }
