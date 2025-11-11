@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const reelsData = [
+const reelsData: { id: number; src: string }[] = [ 
   { id: 1, src: '/videos/Jordan Retro.mp4' },
   { id: 2, src: '/videos/Mochila.mp4' },
   { id: 3, src: '/videos/VOMERO.mp4' },
@@ -11,7 +11,7 @@ export default function ReelsSection() {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentVideo, setCurrentVideo] = useState('');
 
-  const openModal = (videoSrc) => {
+  const openModal = (videoSrc: string) => {
     setCurrentVideo(videoSrc);
     setModalOpen(true);
     document.body.style.overflow = 'hidden';

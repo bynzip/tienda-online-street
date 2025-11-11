@@ -1,6 +1,6 @@
-import HeroSection from '../components/HeroSection';
+import HeroSection from '../components/HeroSection.js';
 import CategorySection from '../components/CategorySection';
-import ReelsSection from '../components/ReelsSection';
+import ReelsSection from '../components/ReelsSection.js';
 import { ClothesCategorySection } from '../components/ClothesCategorySection';
 
 import { ProductCarousel } from '../components/ProductCarousel'; // Asegúrate de que la ruta sea correcta

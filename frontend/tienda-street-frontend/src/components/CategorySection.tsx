@@ -1,6 +1,14 @@
 import { Link } from 'react-router-dom';
 
-const CategoryCard = ({ title, img, link }) => (
+// 1. Definimos la interfaz para las props de CategoryCard
+interface CategoryCardProps {
+  title: string;
+  img: string;
+  link: string;
+}
+
+// 2. Tipamos las props del componente
+const CategoryCard = ({ title, img, link }: CategoryCardProps) => (
   <Link
     to={link}
     className="group relative flex-1 max-w-7xl md:h-[500px] flex flex-col justify-end items-start p-6 md:p-10 text-white overflow-hidden no-underline"
