@@ -13,6 +13,8 @@ const PlaceholderImage = () => (
 );
 
 export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
+  const normalizeMediaUrl = (src: string) => src.replace(/^https?:\/\/(localhost|127\.0\.0\.1):8000/i, '');
+  const imageSrc = producto.imagen_principal ? normalizeMediaUrl(producto.imagen_principal) : null;
   return (
     <Link
       to={`/producto/${producto.id}`}
@@ -20,9 +22,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
     >
       {/* Contenedor de imagen con aspect ratio fijo */}
       <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
-        {producto.imagen_principal ? (
+        {imageSrc ? (
           <img
-            src={producto.imagen_principal}
+            loading="lazy"
+            decoding="async"
+            src={imageSrc}
             alt={producto.nombre}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />

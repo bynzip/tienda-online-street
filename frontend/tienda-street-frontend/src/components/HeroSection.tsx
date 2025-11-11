@@ -15,10 +15,10 @@ export default function HeroSection() {
         Tu navegador no soporta videos HTML5.
       </video>
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40 z-1"></div>
+      <div className="absolute inset-0 bg-black/40 z-10"></div>
 
       {/* Contenido */}
-      <div className="relative z-2 flex flex-col items-center">
+      <div className="relative z-20 flex flex-col items-center">
         <span className="text-white tracking-[5px] text-sm mb-2 block uppercase font-semibold">
           EXCLUSIVO - 2025
         </span>

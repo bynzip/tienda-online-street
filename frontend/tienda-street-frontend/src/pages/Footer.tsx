@@ -23,7 +23,7 @@ const Footer = () => {
           <div className="grid gap-2">
             <h3 className="font-semibold text-white">Categorías</h3>
             {categorias?.map((categoria) => (
-              <FooterLink key={categoria.id} href={`/productos?categoria=${categoria.nombre}`}>
+              <FooterLink key={categoria.id} href={`/productos?categoria=${categoria.id}`}>
                 {categoria.nombre}
               </FooterLink>
             ))}
@@ -33,7 +33,7 @@ const Footer = () => {
           <div className="grid gap-2">
             <h3 className="font-semibold text-white">Marcas</h3>
             {marcas?.map((marca) => (
-              <FooterLink key={marca.id} href={`/productos?marca=${marca.nombre}`}>
+              <FooterLink key={marca.id} href={`/productos?marca=${marca.id}`}>
                 {marca.nombre}
               </FooterLink>
             ))}

@@ -62,7 +62,7 @@ const Sidenav: React.FC<SidenavProps> = ({ isOpen, onClose }) => {
       {/* --- Overlay (Fondo Oscuro) --- */}
       <div
         onClick={onClose}
-        className={clsx('fixed inset-0 z-1500 bg-black/50 transition-opacity duration-300', {
+        className={clsx('fixed inset-0 z-[1500] bg-black/50 transition-opacity duration-300', {
           'opacity-100': isOpen,
           'opacity-0 pointer-events-none': !isOpen,
         })}
@@ -71,8 +71,8 @@ const Sidenav: React.FC<SidenavProps> = ({ isOpen, onClose }) => {
       {/* --- Menú (Sidenav) --- */}
       <nav
         className={clsx(
-          'h-full w-[250px] fixed z-2000 top-0 left-0 bg-white pt-[60px] shadow-lg',
-          'text-black transform transition-transform duration-400 ease-in-out overflow-y-auto',
+          'h-full w-[250px] fixed z-[2000] top-0 left-0 bg-white pt-[60px] shadow-lg',
+          'text-black transform transition-transform duration-[400ms] ease-in-out overflow-y-auto',
           {
             'translate-x-0': isOpen,
             '-translate-x-full': !isOpen,
@@ -113,15 +113,20 @@ const Sidenav: React.FC<SidenavProps> = ({ isOpen, onClose }) => {
                   }
                 )}
               >
-                {group.data?.map((item) => (
-                  <SidenavLink
-                    key={item.id}
-                    href={`/productos?${group.param}=${item.nombre}`}
-                    onClick={onClose}
-                  >
-                    {item.nombre}
-                  </SidenavLink>
-                ))}
+                {group.data?.map((item) => {
+                  const href = group.param === 'temporada'
+                    ? `/productos?search=${encodeURIComponent(item.nombre)}`
+                    : `/productos?${group.param}=${item.id}`;
+                  return (
+                    <SidenavLink
+                      key={item.id}
+                      href={href}
+                      onClick={onClose}
+                    >
+                      {item.nombre}
+                    </SidenavLink>
+                  );
+                })}
               </div>
             </div>
           ))}
