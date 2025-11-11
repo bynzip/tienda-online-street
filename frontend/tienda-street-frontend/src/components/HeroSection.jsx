@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function HeroSection() {
   return (
-    <section className="relative h-[70vh] md:h-[80vh] flex flex-col justify-center items-center text-center overflow-hidden text-white">
+    <section className="relative h-[70vh] md:h-[80vh] flex flex-col justify-center items-center text-center overflow-hidden text-white lg:mb-12">
       {/* Video de Fondo */}
       <video
         autoPlay

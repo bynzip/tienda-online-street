@@ -10,29 +10,21 @@ function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <HeroSection />
-
-      {/* Primera Sección de Productos (Carruseles) */}
-      <div className="py-8">
-         <ProductCarousel title="Lo Nuevo 🔥" apiUrl="/api/productos/"/>
-         {/* Puedes añadir más espacio si lo necesitas entre carruseles */}
-         <div className="mt-8">
-            <ProductCarousel title="Zapatillas Populares" apiUrl="/api/productos/?search=Zapatilla" />
-         </div>
-      </div>
+      <ProductCarousel title="Lo Nuevo 🔥" apiUrl="/api/productos/" limit={6}/>
 
       {/* Categorías Zapatillas */}
       <CategorySection />
-
-      {/* Segunda Sección de Productos (Ejemplo de más carruseles, ajusta según necesites) */}
-      <div className="py-8">
-         <ProductCarousel title="Ofertas Especiales 🏷️" apiUrl="/api/productos/?en_oferta=true" />
-      </div>
-
-      {/* Categorías Ropa y Accesorios */}
-      <ClothesCategorySection />
+      {/* Carrusel de Zapatillas Populares */}
+      <ProductCarousel title="Zapatillas Populares" apiUrl="/api/productos/?search=Zapatilla" />
 
       {/* Sección Instagram Reels */}
       <ReelsSection />
+      <ProductCarousel title="Ofertas Especiales 🏷️" apiUrl="/api/productos/?en_oferta=true" />
+
+
+      {/* Categorías Ropa y Accesorios */}
+      <ClothesCategorySection />
+      <ProductCarousel title="Todos Nuestros Productos" apiUrl="/api/productos/"/>
     </div>
   );
 }

@@ -24,7 +24,7 @@ export default function ReelsSection() {
   };
 
   return (
-    <section className="py-12 px-4 md:px-12 text-center bg-[#f9f9f9]">
+    <section className="py-12 px-4 md:px-12 text-center bg-[#f9f9f9] max-w-7xl mx-auto lg:px-10">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-black text-black uppercase flex items-center justify-center gap-2">
           Nuestro Contenido <i className="fab fa-instagram text-2xl"></i>
