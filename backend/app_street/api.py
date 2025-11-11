@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Producto, Categoria, Marca, Talla, Genero, Temporada
 from .serializers import (
     ProductoListSerializer,
@@ -14,12 +15,15 @@ from .serializers import (
 # --- ViewSets para los Modelos ---
 
 class ProductoViewSet(viewsets.ModelViewSet):
-    """
-    Gestiona las acciones para Productos e incluye búsqueda.
-    """
     queryset = Producto.objects.all().prefetch_related('imagenes', 'talla_stock')
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [filters.SearchFilter]
+    
+    filter_backends = [
+        DjangoFilterBackend, # Para filtros por campo
+        filters.SearchFilter # Para la búsqueda general
+    ]
+
+    filterset_fields = ['categoria', 'marca', 'genero', 'en_oferta']
     search_fields = ['nombre', 'sku', 'descripcion', 'marca__nombre']
 
     def get_serializer_class(self):
