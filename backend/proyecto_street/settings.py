@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'app_street',
     'rest_framework',
     'corsheaders',
+    'django_filters'
 ]
 
 REST_FRAMEWORK = {
