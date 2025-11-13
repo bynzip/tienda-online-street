@@ -20,7 +20,7 @@ const CategoryCard = ({ title, img, link }: CategoryCardProps) => (
         alt={title}
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
     />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 transition-all duration-300 group-hover:from-black/90"></div>
+    <div className="absolute inset-0 bg-linaer-gradiento-t from-black/80 via-black/20 to-transparent z-10 transition-all duration-300 group-hover:from-black/90"></div>
     <div className="relative z-20 w-full">
       <h2 className="text-2xl md:text-3xl lg:text-4xl leading-tight mb-2 font-black text-white drop-shadow-md uppercase">
         {title}

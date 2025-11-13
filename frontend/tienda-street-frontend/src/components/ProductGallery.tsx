@@ -14,7 +14,6 @@ const PlaceholderImage = () => (
 
 function ProductGallery({ imagenes, nombre }: ProductGalleryProps) {
   const [imagenSeleccionada, setImagenSeleccionada] = useState(0);
-  const normalizeMediaUrl = (src: string) => src.replace(/^https?:\/\/(localhost|127\.0\.0\.1):8000/i, '');
 
   // Si no hay imágenes, mostrar placeholder
   if (!imagenes || imagenes.length === 0) {
@@ -34,7 +33,7 @@ function ProductGallery({ imagenes, nombre }: ProductGalleryProps) {
         <img
           loading="lazy"
           decoding="async"
-          src={normalizeMediaUrl(imagenes[imagenSeleccionada].imagen)}
+          src={imagenes[imagenSeleccionada].imagen}
           alt={`${nombre} - Imagen ${imagenSeleccionada + 1}`}
           className="w-full h-full object-cover"
         />
@@ -59,7 +58,7 @@ function ProductGallery({ imagenes, nombre }: ProductGalleryProps) {
               <img
                 loading="lazy"
                 decoding="async"
-                src={normalizeMediaUrl(imagen.imagen)}
+                src={imagen.imagen}
                 alt={`${nombre} - Miniatura ${index + 1}`}
                 className="w-full h-full object-cover"
               />

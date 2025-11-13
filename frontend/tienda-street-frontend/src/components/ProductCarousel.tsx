@@ -115,7 +115,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({ title, apiUrl,
                 productsToRender.map((producto) => (
                   <div
                     key={producto.id}
-                    className="flex-none h-full w-[180px] lg:w-[228px] snap-start"
+                    className="flex-none h-full w-[180px] lg:w-[290px] snap-start"
                   >
                     <ProductCard producto={producto} />
                   </div>

@@ -23,8 +23,8 @@ class ProductoViewSet(viewsets.ModelViewSet):
         filters.SearchFilter # Para la búsqueda general
     ]
 
-    filterset_fields = ['categoria', 'marca', 'genero', 'en_oferta']
-    search_fields = ['nombre', 'sku', 'descripcion', 'marca__nombre']
+    filterset_fields = ['categoria', 'marca', 'genero', 'en_oferta', 'temporada']
+    search_fields = ['nombre', 'sku', 'descripcion', 'marca__nombre', 'categoria__nombre', 'genero__nombre', 'temporada__nombre']
 
     def get_serializer_class(self):
         if self.action == 'list':

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const reelsData: { id: number; src: string }[] = [ 
+const reelsData: { id: number; src: string }[] = [
   { id: 1, src: '/videos/Jordan Retro.mp4' },
   { id: 2, src: '/videos/Mochila.mp4' },
   { id: 3, src: '/videos/VOMERO.mp4' },
@@ -24,12 +24,12 @@ export default function ReelsSection() {
   };
 
   return (
-    <section className="py-12 px-4 md:px-12 text-center bg-[#f9f9f9] max-w-7xl mx-auto lg:px-10">
+    <section className="py-12 px-4 md:px-12 text-center max-w-7xl mx-auto lg:px-10">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-black text-black uppercase flex items-center justify-center gap-2">
           Nuestro Contenido <i className="fab fa-instagram text-2xl"></i>
         </h2>
-         <p className="text-gray-600 mt-2">Síguenos en instagram @streetwear.peru</p>
+        <p className="text-gray-600 mt-2">Síguenos en instagram @streetwear.peru</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -49,7 +49,10 @@ export default function ReelsSection() {
       </div>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-9999 bg-black/95 flex justify-center items-center p-4" onClick={closeModal}>
+        <div
+          className="fixed inset-0 z-9999 bg-black/95 flex justify-center items-center p-4"
+          onClick={closeModal}
+        >
           <div className="relative w-full max-w-md" onClick={(e) => e.stopPropagation()}>
             <button
               className="absolute -top-10 right-0 text-white text-4xl font-bold leading-none hover:text-gray-300"
@@ -57,8 +60,13 @@ export default function ReelsSection() {
             >
               &times;
             </button>
-            <video src={currentVideo} controls autoPlay className="w-full rounded-xl max-h-[80vh] bg-black" />
-             <a
+            <video
+              src={currentVideo}
+              controls
+              autoPlay
+              className="w-full rounded-xl max-h-[80vh] bg-black"
+            />
+            <a
               href="https://www.instagram.com/streetwear.peru/"
               target="_blank"
               rel="noopener noreferrer"

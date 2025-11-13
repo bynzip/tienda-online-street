@@ -13,8 +13,6 @@ const PlaceholderImage = () => (
 );
 
 export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
-  const normalizeMediaUrl = (src: string) => src.replace(/^https?:\/\/(localhost|127\.0\.0\.1):8000/i, '');
-  const imageSrc = producto.imagen_principal ? normalizeMediaUrl(producto.imagen_principal) : null;
   return (
     <Link
       to={`/producto/${producto.id}`}
@@ -22,11 +20,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
     >
       {/* Contenedor de imagen con aspect ratio fijo */}
       <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
-        {imageSrc ? (
+        {producto.imagen_principal ? (
           <img
             loading="lazy"
             decoding="async"
-            src={imageSrc}
+            src={producto.imagen_principal}
             alt={producto.nombre}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -38,7 +36,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
       {/* Contenido con altura mínima fija */}
       <div className="p-4 min-h-[120px] flex flex-col">
         {/* Nombre */}
-        <h3 className="text-[15px] font-semibold text-gray-900 line-clamp-2 mb-1">
+        <h3 className="text-[17px] font-semibold text-gray-900 line-clamp-2 mb-1">
           {producto.nombre}
         </h3>
 
@@ -58,10 +56,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
         {/* Precios */}
         <div className="flex items-baseline gap-2 mt-auto">
           {!producto.en_oferta ? (
-            <p className="text-[14px] font-semibold text-gray-900">S/ {producto.precio_final}</p>
+            <p className="text-[16px] font-semibold text-gray-900">S/ {producto.precio_final}</p>
           ) : (
             <>
-              <p className="text-[14px] font-semibold text-gray-900">S/ {producto.precio_final}</p>
+              <p className="text-[16px] font-semibold text-gray-900">S/ {producto.precio_final}</p>
               <p className="text-[11px] text-gray-500 line-through">S/ {producto.precio_base}</p>
             </>
           )}
