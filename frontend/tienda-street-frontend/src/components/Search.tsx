@@ -3,23 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import type { IProductos } from '../interfaces/productos';
 import clsx from 'clsx';
 
-const SearchIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-6 w-6 cursor-pointer"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-    />
-  </svg>
-);
-
 const CloseIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -39,27 +22,25 @@ const PlaceholderImage = () => (
   </div>
 );
 
-export default function Search() {
-  const [isOpen, setIsOpen] = useState(false);
+interface SearchProps {
+  isOpen: boolean;
+  closeSearch: () => void;
+}
+
+export const Search: React.FC<SearchProps> = ({ isOpen, closeSearch }) => {
   const [searchValue, setSearchValue] = useState('');
   const [suggestions, setSuggestions] = useState<IProductos[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestCache = useRef<Map<string, IProductos[]>>(new Map());
 
+  function close() {
+    setSearchValue('');
+    closeSearch();
+  }
+
   const navigate = useNavigate();
   const location = useLocation();
-
-  const openSearch = () => {
-    setIsOpen(true);
-    setTimeout(() => inputRef.current?.focus(), 100);
-  };
-
-  const closeSearch = () => {
-    setIsOpen(false);
-    setSearchValue('');
-    setSuggestions([]);
-  };
 
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -69,7 +50,7 @@ export default function Search() {
     } else {
       navigate(`/productos?search=${encodeURIComponent(q)}`);
     }
-    closeSearch();
+    close();
   };
 
   useEffect(() => {
@@ -80,7 +61,6 @@ export default function Search() {
 
   useEffect(() => {
     let active = true;
-    let timer: number | undefined;
 
     const q = searchValue.trim();
     if (q.length < 2) {
@@ -97,7 +77,7 @@ export default function Search() {
     }
 
     setLoading(true);
-    timer = window.setTimeout(async () => {
+    const timer = window.setTimeout(async () => {
       try {
         const res = await fetch(`/api/productos/?search=${encodeURIComponent(q)}`);
         if (!res.ok) throw new Error('Error al buscar');
@@ -109,7 +89,6 @@ export default function Search() {
         if (!active) return;
         setSuggestions([]);
       } finally {
-        if (!active) return;
         setLoading(false);
       }
     }, 300);
@@ -132,40 +111,21 @@ export default function Search() {
       document.removeEventListener('keydown', handleEsc);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, closeSearch]);
 
   return (
     <>
-      {/* Botón para abrir búsqueda */}
-      <button
-        onClick={openSearch}
-        className="p-2 text-gray-700 hover:text-black transition-colors"
-        aria-label="Buscar"
-      >
-        <SearchIcon />
-      </button>
-
       {/* Overlay de búsqueda */}
       {isOpen && (
-        <div
-          onClick={closeSearch}
-          className={clsx(
-            'h-full w-full fixed inset-0 z-15500 bg-black/50 transition-opacity duration-300',
-            {
-              'opacity-100': isOpen,
-              'opacity-0 pointer-events-none': !isOpen,
-            }
-          )}
-        >
-          <div className="fixed inset-0 z-50 bg-white ">
+        <div>
+          <div className="fixed z-250 bg-white w-full h-29 top-0">
             {/* Header del overlay */}
             <div>
-              <div className="max-w-4xl mx-auto pt-7 flex items-center gap-4">
+              <div className="max-w-4xl mx-auto pt-7 flex items-center gap-4 px-4 lg:px-2">
                 <form
                   onSubmit={handleSearch}
                   className="flex-1 flex items-center gap-3 border-2 border-gray-800 px-3"
                 >
-                  <SearchIcon />
                   <input
                     ref={inputRef}
                     type="text"
@@ -176,7 +136,7 @@ export default function Search() {
                     autoComplete="off"
                   />
                   <button
-                    onClick={closeSearch}
+                    onClick={close}
                     className="py-2 rounded-full transition-colors cursor-pointer"
                     aria-label="Cerrar búsqueda"
                   >
@@ -189,13 +149,12 @@ export default function Search() {
             {/* Contenido de resultados */}
             {searchValue.trim().length > 2 && (
               <div
-                className="max-w-4xl mx-auto px-8 overflow-y-auto pt-5 bg-white shadow-lg z-99999"
+                className="lg:max-w-4xl min-h-screen lg:min-h-auto mx-auto px-8 overflow-y-auto pt-5 bg-white shadow-lg z-150"
                 style={{ maxHeight: 'calc(95vh - 80px)' }}
               >
                 {loading && (
-                  <div className="text-center py-8s">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                    <p className="mt-3 text-gray-600">Buscando...</p>
+                  <div className="text-center flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 pb-5 border-gray-900"></div>
                   </div>
                 )}
 
@@ -227,7 +186,7 @@ export default function Search() {
                         <Link
                           key={producto.id}
                           to={`/producto/${producto.id}`}
-                          onClick={closeSearch}
+                          onClick={close}
                           className="group block mb-3"
                         >
                           <div className="aspect-square overflow-hidden rounded-lg bg-gray-50 mb-4">
@@ -277,8 +236,18 @@ export default function Search() {
             )}
             {searchValue.trim().length < 2 && <div></div>}
           </div>
+          <div
+            onClick={close}
+            className={clsx(
+              'h-full w-full fixed inset-0 z-150 bg-black/50 transition-opacity duration-300',
+              {
+                'opacity-100': isOpen,
+                'opacity-0 pointer-events-none': !isOpen,
+              }
+            )}
+          ></div>
         </div>
       )}
     </>
   );
-}
+};

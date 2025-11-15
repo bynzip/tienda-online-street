@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidenav from '../components/Sidenav.tsx';
-import Search from '../components/Search.tsx';
+import { Search } from '../components/Search.tsx';
 
 const MenuIcon = () => (
   <div className="flex flex-col justify-between h-5 w-[30px] cursor-pointer group">
@@ -11,13 +11,33 @@ const MenuIcon = () => (
   </div>
 );
 
+const SearchIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 cursor-pointer"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+    />
+  </svg>
+);
+
 export default function Header() {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const openNav = () => setIsNavOpen(true);
   const closeNav = () => setIsNavOpen(false);
+  const openSearch = () => setIsSearchOpen(true);
+  const closeSearch = () => setIsSearchOpen(false);
 
   //Esconder Header al hacer Scroll
   useEffect(() => {
@@ -47,7 +67,7 @@ export default function Header() {
       >
         {/* Lado Izquierdo: Botón de Menú */}
         <div className="flex-1 flex justify-start">
-          <button onClick={openNav} className="p-2 -ml-2" aria-label="Abrir menú">
+          <button onClick={openNav} className="p-2 -ml-2 cursor-pointer" aria-label="Abrir menú">
             <MenuIcon />
           </button>
         </div>
@@ -61,11 +81,18 @@ export default function Header() {
 
         {/* Lado Derecho: Buscador */}
         <div className="flex-1 flex justify-end">
-          <Search />
+          <button
+            onClick={openSearch}
+            className="p-2 text-gray-700 hover:text-black transition-colors cursor-pointer"
+            aria-label="Buscar"
+          >
+            <SearchIcon />
+          </button>
         </div>
       </header>
 
       <Sidenav isOpen={isNavOpen} onClose={closeNav} />
+      <Search isOpen={isSearchOpen} closeSearch={closeSearch} />
     </>
   );
 }
