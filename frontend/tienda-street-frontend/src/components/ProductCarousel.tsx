@@ -40,13 +40,17 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({ title, apiUrl,
   // Función para scroll suave de 4 productos
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
-      const scrollAmount = (280 + 16) * 4; // ancho de tarjeta (280px) + gap (16px) * 4 productos
+      const container = scrollContainerRef.current;
+      // Calcular dinámicamente el ancho de la tarjeta basado en el ancho de la pantalla
+      const cardWidth = window.innerWidth < 1024 ? 200 : 290; // lg: 290px, default: 200px
+      const gap = 16;
+      const scrollAmount = (cardWidth + gap) * 4; // Scroll por 4 productos
       const newScrollLeft =
         direction === 'left'
-          ? scrollContainerRef.current.scrollLeft - scrollAmount
-          : scrollContainerRef.current.scrollLeft + scrollAmount;
+          ? Math.max(0, container.scrollLeft - scrollAmount)
+          : container.scrollLeft + scrollAmount;
 
-      scrollContainerRef.current.scrollTo({
+      container.scrollTo({
         left: newScrollLeft,
         behavior: 'smooth',
       });
@@ -72,14 +76,14 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({ title, apiUrl,
             <div className="flex gap-2">
               <button
                 onClick={() => scroll('left')}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-gray-300 text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-gray-300 text-gray-700 shadow-sm hover:bg-gray-50 hover:shadow-md active:bg-gray-100 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Anterior"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={() => scroll('right')}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-gray-300 text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-gray-300 text-gray-700 shadow-sm hover:bg-gray-50 hover:shadow-md active:bg-gray-100 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Siguiente"
               >
                 <ChevronRight className="h-5 w-5" />

@@ -10,21 +10,21 @@ function HomePage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <HeroSection />
-      <ProductCarousel title="Lo Nuevo 🔥" apiUrl="/api/productos/" limit={6}/>
+      <ProductCarousel title="Lo Nuevo 🔥" apiUrl="/api/productos/?ordering=-fecha_registro" limit={6}/>
 
       {/* Categorías Zapatillas */}
       <CategorySection />
       {/* Carrusel de Zapatillas Populares */}
-      <ProductCarousel title="Zapatillas Populares" apiUrl="/api/productos/?search=Zapatilla" />
+      <ProductCarousel title="Zapatillas Populares" apiUrl="/api/productos/?search=Zapatilla" limit={6}/>
 
       {/* Sección Instagram Reels */}
       <ReelsSection />
-      <ProductCarousel title="Ofertas Especiales 🏷️" apiUrl="/api/productos/?en_oferta=true" />
+      <ProductCarousel title="Ofertas Especiales 🏷️" apiUrl="/api/productos/?en_oferta=true" limit={6}/>
 
 
       {/* Categorías Ropa y Accesorios */}
       <ClothesCategorySection />
-      <ProductCarousel title="Todos Nuestros Productos" apiUrl="/api/productos/"/>
+      <ProductCarousel title="Todos Nuestros Productos" apiUrl="/api/productos/" limit={8}/>
     </div>
   );
 }

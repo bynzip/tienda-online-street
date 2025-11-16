@@ -24,9 +24,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ producto }) => {
           <img
             loading="lazy"
             decoding="async"
+            fetchPriority="low"
             src={producto.imagen_principal}
             alt={producto.nombre}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-150 group-hover:scale-105"
           />
         ) : (
           <PlaceholderImage />

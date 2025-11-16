@@ -31,7 +31,7 @@ function ProductGallery({ imagenes, nombre }: ProductGalleryProps) {
       {/* Imagen principal */}
       <div className="aspect-square rounded-lg overflow-hidden bg-gray-50 border border-gray-200">
         <img
-          loading="lazy"
+          fetchPriority="high"
           decoding="async"
           src={imagenes[imagenSeleccionada].imagen}
           alt={`${nombre} - Imagen ${imagenSeleccionada + 1}`}
@@ -47,7 +47,7 @@ function ProductGallery({ imagenes, nombre }: ProductGalleryProps) {
               key={imagen.id}
               onClick={() => setImagenSeleccionada(index)}
               className={`
-                aspect-square rounded-lg overflow-hidden border-2 transition-all
+                aspect-square rounded-lg overflow-hidden border-2
                 ${
                   imagenSeleccionada === index
                     ? 'border-black shadow-md'

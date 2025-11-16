@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+/* Transiciones optimizadas para velocidad */
+@layer base {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    @apply transition-colors duration-100;
+  }
+
+  /* Transiciones rápidas para botones y enlaces */
+  button,
+  a {
+    @apply transition-all duration-75;
+  }
+
+  /* Scroll instant en contenedores */
+  .scroll-smooth {
+    scroll-behavior: auto;
+  }
+}

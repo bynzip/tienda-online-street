@@ -91,7 +91,7 @@ export const Search: React.FC<SearchProps> = ({ isOpen, closeSearch }) => {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 150);
 
     return () => {
       active = false;
@@ -137,7 +137,7 @@ export const Search: React.FC<SearchProps> = ({ isOpen, closeSearch }) => {
                   />
                   <button
                     onClick={close}
-                    className="py-2 rounded-full transition-colors cursor-pointer"
+                    className="py-2 rounded-full cursor-pointer"
                     aria-label="Cerrar búsqueda"
                   >
                     <CloseIcon />
@@ -192,9 +192,11 @@ export const Search: React.FC<SearchProps> = ({ isOpen, closeSearch }) => {
                           <div className="aspect-square overflow-hidden rounded-lg bg-gray-50 mb-4">
                             {producto.imagen_principal ? (
                               <img
+                                loading="lazy"
+                                decoding="async"
                                 src={producto.imagen_principal}
                                 alt={producto.nombre}
-                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                className="h-full w-full object-cover transition-transform duration-150 group-hover:scale-105"
                               />
                             ) : (
                               <PlaceholderImage />
@@ -211,7 +213,7 @@ export const Search: React.FC<SearchProps> = ({ isOpen, closeSearch }) => {
                     <div className="text-center border-t border-gray-200">
                       <button
                         onClick={handleSearch}
-                        className="cursor-pointer flex items-center justify-between w-full pt-4 pb-5 text-gray-600 text-sm rounded-lg hover:text-gray-800 hover:underline transition-colors"
+                        className="cursor-pointer flex items-center justify-between w-full pt-4 pb-5 text-gray-600 text-sm rounded-lg hover:text-gray-800 hover:underline"
                       >
                         Buscar "{searchValue}"
                         <svg
@@ -239,7 +241,7 @@ export const Search: React.FC<SearchProps> = ({ isOpen, closeSearch }) => {
           <div
             onClick={close}
             className={clsx(
-              'h-full w-full fixed inset-0 z-150 bg-black/50 transition-opacity duration-300',
+              'h-full w-full fixed inset-0 z-150 bg-black/50 transition-opacity duration-150',
               {
                 'opacity-100': isOpen,
                 'opacity-0 pointer-events-none': !isOpen,

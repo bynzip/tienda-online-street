@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { IProducto } from '../interfaces/productos';
 import { ShoppingCart, MessageCircle } from 'lucide-react';
+import { useCart } from '../hooks/useCart';
 
 interface ProductDetailsProps {
   producto: IProducto;
@@ -9,6 +10,8 @@ interface ProductDetailsProps {
 function ProductDetails({ producto }: ProductDetailsProps) {
   const [tallaSeleccionada, setTallaSeleccionada] = useState<string | null>(null);
   const [cantidad, setCantidad] = useState(1);
+  const [mostrarMensaje, setMostrarMensaje] = useState(false);
+  const { addToCart } = useCart();
 
   // Obtener el stock de la talla seleccionada
   const stockDisponible = tallaSeleccionada
@@ -31,7 +34,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
 - Precio unitario: S/ ${producto.precio_final}
 - Total: S/ ${total}`;
 
-    const numeroWhatsApp = '51999999999'; // Cambiar por tu número
+    const numeroWhatsApp = '51975738709';
     const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
     window.open(urlWhatsApp, '_blank');
   };
@@ -41,8 +44,21 @@ function ProductDetails({ producto }: ProductDetailsProps) {
       alert('Por favor selecciona una talla');
       return;
     }
-    // TODO: Implementar lógica del carrito
-    alert(`Añadido al carrito: ${producto.nombre} - Talla ${tallaSeleccionada} - Cantidad ${cantidad}`);
+
+    addToCart({
+      id: `${producto.id}-${tallaSeleccionada}`,
+      productId: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio_final,
+      imagen: producto.imagenes[0]?.imagen || null,
+      cantidad,
+      talla: tallaSeleccionada,
+      marca: producto.marca,
+      tallaStockInfo: producto.talla_stock,
+    });
+
+    setMostrarMensaje(true);
+    setTimeout(() => setMostrarMensaje(false), 2000);
   };
 
   return (
@@ -111,11 +127,11 @@ function ProductDetails({ producto }: ProductDetailsProps) {
               key={ts.id}
               onClick={() => {
                 setTallaSeleccionada(ts.talla);
-                setCantidad(1); // Reset cantidad al cambiar talla
+                setCantidad(1);
               }}
               disabled={ts.stock === 0}
               className={`
-                py-2 px-4 text-sm font-medium rounded-lg border-2 transition-all
+                py-2 px-4 text-sm font-medium rounded-lg border-2
                 ${ts.stock === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : ''}
                 ${
                   tallaSeleccionada === ts.talla
@@ -137,7 +153,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-              className="w-10 h-10 rounded-lg border-2 border-gray-300 hover:border-black transition-colors"
+              className="w-10 h-10 rounded-lg border-2 border-gray-300 hover:border-black"
             >
               -
             </button>
@@ -145,11 +161,18 @@ function ProductDetails({ producto }: ProductDetailsProps) {
             <button
               onClick={() => setCantidad(Math.min(stockDisponible, cantidad + 1))}
               disabled={cantidad >= stockDisponible}
-              className="w-10 h-10 rounded-lg border-2 border-gray-300 hover:border-black transition-colors disabled:opacity-50"
+              className="w-10 h-10 rounded-lg border-2 border-gray-300 hover:border-black disabled:opacity-50"
             >
               +
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Mensaje de agregado al carrito */}
+      {mostrarMensaje && (
+        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm font-medium">
+          ✓ Producto agregado al carrito
         </div>
       )}
 
@@ -158,7 +181,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
         <button
           onClick={handleAgregarCarrito}
           disabled={!tallaSeleccionada}
-          className="w-full h-full flex items-center justify-center gap-2 bg-black text-white py-4 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full h-full flex items-center justify-center gap-2 bg-black text-white py-4 rounded-lg font-medium hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           <ShoppingCart className="w-5 h-5" />
           Añadir al Carrito
@@ -167,7 +190,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
         <button
           onClick={generarMensajeWhatsApp}
           disabled={!tallaSeleccionada}
-          className="w-full h-full flex items-center justify-center gap-2 bg-gray-600 text-white py-4 rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full h-full flex items-center justify-center gap-2 bg-gray-600 text-white py-4 rounded-lg font-medium hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           <MessageCircle className="w-5 h-5" />
           Realizar Pedido

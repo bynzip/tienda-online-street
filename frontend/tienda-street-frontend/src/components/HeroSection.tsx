@@ -29,7 +29,7 @@ export default function HeroSection() {
           LA NUEVA COLECCIÓN DE NIKE
         </p>
         <Link
-          to="/catalogo"
+          to="/productos?search=Nike%20Air%20Max%20DN"
           className="bg-[#111] text-white border-none py-4 px-10 text-base font-bold uppercase cursor-pointer transition-colors duration-300 hover:bg-[#333]"
         >
           COMPRAR AHORA

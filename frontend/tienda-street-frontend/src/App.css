@@ -5,11 +5,23 @@
   text-align: center;
 }
 
+/* Transiciones optimizadas para velocidad */
+* {
+  scroll-behavior: auto;
+}
+
+/* Animaciones rápidas */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 .logo {
-  height: 8em; /* Antes era 6em. Ajusta este número para cambiar el tamaño */
+  height: 8em;
   padding: 1.5em;
   will-change: filter;
-  transition: filter 300ms;
+  transition: filter 75ms;
 }
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);

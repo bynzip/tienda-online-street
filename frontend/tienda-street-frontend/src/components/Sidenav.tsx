@@ -14,7 +14,7 @@ const ChevronIcon = ({ className }: { className?: string }) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="currentColor"
-    className={clsx('h-5 w-5 transition-transform duration-300', className)}
+    className={clsx('h-5 w-5 transition-transform duration-100', className)}
   >
     <path
       fillRule="evenodd"
@@ -62,7 +62,7 @@ const Sidenav: React.FC<SidenavProps> = ({ isOpen, onClose }) => {
       {/* --- Overlay (Fondo Oscuro) --- */}
       <div
         onClick={onClose}
-        className={clsx('fixed inset-0 z-1500 bg-black/50 transition-opacity duration-300', {
+        className={clsx('fixed inset-0 z-1500 bg-black/50 transition-opacity duration-150', {
           'opacity-100': isOpen,
           'opacity-0 pointer-events-none': !isOpen,
         })}
@@ -72,7 +72,7 @@ const Sidenav: React.FC<SidenavProps> = ({ isOpen, onClose }) => {
       <nav
         className={clsx(
           'h-full w-[250px] fixed z-2000 top-0 left-0 bg-white pt-[60px] shadow-lg',
-          'text-black transform transition-transform duration-400ms ease-in-out overflow-y-auto',
+          'text-black transform transition-transform duration-200 ease-in-out overflow-y-auto',
           {
             'translate-x-0': isOpen,
             '-translate-x-full': !isOpen,

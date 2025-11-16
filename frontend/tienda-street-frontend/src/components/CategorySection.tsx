@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useFetch } from '../api/useFetch';
-import type { IGenero } from '../interfaces/productos';
+import type { IGenero, ICategoria } from '../interfaces/productos';
 
 interface CategoryCardProps {
   title: string;
@@ -18,9 +18,9 @@ const CategoryCard = ({ title, img, link }: CategoryCardProps) => (
         decoding="async"
         src={img}
         alt={title}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
     />
-    <div className="absolute inset-0 bg-linaer-gradiento-t from-black/80 via-black/20 to-transparent z-10 transition-all duration-300 group-hover:from-black/90"></div>
+    <div className="absolute inset-0 bg-linear-gradient-t from-black/80 via-black/20 to-transparent z-10 transition-all duration-300 group-hover:from-black/90"></div>
     <div className="relative z-20 w-full">
       <h2 className="text-2xl md:text-3xl lg:text-4xl leading-tight mb-2 font-black text-white drop-shadow-md uppercase">
         {title}
@@ -32,11 +32,24 @@ const CategoryCard = ({ title, img, link }: CategoryCardProps) => (
 
 export default function CategorySection() {
   const { data: generos } = useFetch<IGenero[]>('/api/generos/');
+  const { data: categorias } = useFetch<ICategoria[]>('/api/categorias/');
+
   const idHombre = generos?.find((g) => g.nombre.toLowerCase() === 'hombre')?.id;
   const idMujer = generos?.find((g) => g.nombre.toLowerCase() === 'mujer')?.id;
+  const idUnisex = generos?.find((g) => g.nombre.toLowerCase() === 'unisex')?.id;
+  const idZapatillas = categorias?.find((c) => c.nombre.toLowerCase().includes('zapatilla'))?.id;
 
-  const linkHombre = idHombre ? `/productos?genero=${idHombre}` : `/productos?search=Hombre`;
-  const linkMujer = idMujer ? `/productos?genero=${idMujer}` : `/productos?search=Mujer`;
+  const linkHombre = idZapatillas && idHombre && idUnisex
+    ? `/productos?categoria=${idZapatillas}&genero=${idHombre}&genero=${idUnisex}`
+    : idZapatillas && idHombre
+    ? `/productos?categoria=${idZapatillas}&genero=${idHombre}`
+    : `/productos?search=Zapatillas%20Hombre`;
+
+  const linkMujer = idZapatillas && idMujer && idUnisex
+    ? `/productos?categoria=${idZapatillas}&genero=${idMujer}&genero=${idUnisex}`
+    : idZapatillas && idMujer
+    ? `/productos?categoria=${idZapatillas}&genero=${idMujer}`
+    : `/productos?search=Zapatillas%20Mujer`;
 
   return (
     <section className="flex flex-col max-w-7xl mx-auto md:flex-row gap-4 p-4 md:gap-6 md:p-8 lg:px-10">

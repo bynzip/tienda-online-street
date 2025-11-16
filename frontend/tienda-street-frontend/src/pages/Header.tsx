@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Sidenav from '../components/Sidenav.tsx';
 import { Search } from '../components/Search.tsx';
+import { useCart } from '../hooks/useCart.ts';
 
 const MenuIcon = () => (
   <div className="flex flex-col justify-between h-5 w-[30px] cursor-pointer group">
-    <span className="block h-[3px] w-full rounded-full bg-black transition-all group-hover:bg-gray-700"></span>
-    <span className="block h-[3px] w-full rounded-full bg-black transition-all group-hover:bg-gray-700"></span>
-    <span className="block h-[3px] w-full rounded-full bg-black transition-all group-hover:bg-gray-700"></span>
+    <span className="block h-[3px] w-full rounded-full bg-black group-hover:bg-gray-700"></span>
+    <span className="block h-[3px] w-full rounded-full bg-black group-hover:bg-gray-700"></span>
+    <span className="block h-[3px] w-full rounded-full bg-black group-hover:bg-gray-700"></span>
   </div>
 );
 
@@ -28,11 +29,23 @@ const SearchIcon = () => (
   </svg>
 );
 
+const CartIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 cursor-pointer"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 00 20.55 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+  </svg>
+);
+
 export default function Header() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const { totalItems } = useCart();
 
   const openNav = () => setIsNavOpen(true);
   const closeNav = () => setIsNavOpen(false);
@@ -59,9 +72,9 @@ export default function Header() {
     <>
       <header
         className={`
-          sticky top-0 z-40 flex w-full items-center justify-between 
+          sticky top-0 z-40 flex w-full items-center justify-between
           bg-white/98 px-4 py-3 shadow-sm backdrop-blur-sm md:px-8
-          transition-transform duration-300 ease-in-out
+          transition-transform duration-150 ease-in-out
           ${isVisible ? 'translate-y-0' : '-translate-y-full'}
         `}
       >
@@ -75,19 +88,31 @@ export default function Header() {
         {/* Centro: Logo */}
         <div className="shrink-0">
           <Link to="/" className="block" onClick={closeNav}>
-            <img src="/sinfodo_street.png" alt="Streetwear Logo" className="w-32 md:w-40" />
+            <img fetchPriority="high" src="/sinfodo_street.png" alt="Streetwear Logo" className="w-32 md:w-40" />
           </Link>
         </div>
 
-        {/* Lado Derecho: Buscador */}
-        <div className="flex-1 flex justify-end">
+        {/* Lado Derecho: Buscador y Carrito */}
+        <div className="flex-1 flex justify-end gap-2">
           <button
             onClick={openSearch}
-            className="p-2 text-gray-700 hover:text-black transition-colors cursor-pointer"
+            className="p-2 text-gray-700 hover:text-black cursor-pointer"
             aria-label="Buscar"
           >
             <SearchIcon />
           </button>
+          <Link
+            to="/carrito"
+            className="relative p-2 text-gray-700 hover:text-black cursor-pointer"
+            aria-label="Carrito de compras"
+          >
+            <CartIcon />
+            {totalItems > 0 && (
+              <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </Link>
         </div>
       </header>
 
