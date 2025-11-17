@@ -41,7 +41,7 @@ function ProductDetailPage() {
       {/* Productos recomendados */}
       <ProductCarousel
         title="Productos Recomendados"
-        apiUrl={`/api/productos/`}
+        apiUrl={`/api/productos/${id}/recommend/`}
         limit={8}
       />
     </div>
