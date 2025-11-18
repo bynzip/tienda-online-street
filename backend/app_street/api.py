@@ -23,22 +23,34 @@ class ProductoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     filter_backends = [
-        DjangoFilterBackend, # Para filtros por campo
-        filters.SearchFilter, # Para la búsqueda general
-        filters.OrderingFilter # Para ordenamiento
+        DjangoFilterBackend,  # Para filtros (ej: ?categoria=1)
+        filters.SearchFilter, # Para búsqueda (ej: ?search=nike)
+        filters.OrderingFilter        # Para ordenar (ej: ?ordering=-fecha_registro)
     ]
-
-    filterset_fields = ['categoria', 'marca', 'genero', 'en_oferta', 'temporada']
-    search_fields = ['nombre', 'sku', 'descripcion', 'marca__nombre', 'categoria__nombre', 'genero__nombre', 'temporada__nombre']
-    ordering_fields = ['fecha_registro', 'precio_base', 'nombre']
-    ordering = ['-fecha_registro']
-    """
-    Gestiona las acciones para Productos e incluye búsqueda y recomendaciones.
-    """
-    queryset = Producto.objects.all().prefetch_related('imagenes', 'talla_stock')
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['nombre', 'sku', 'descripcion', 'marca__nombre']
+    
+    # Campos por los que se puede filtrar exactamente
+    filterset_fields = [
+        'categoria', 
+        'marca', 
+        'genero', 
+        'temporada', 
+        'en_oferta'
+    ]
+    
+    # Campos por los que se puede buscar (búsqueda de texto)
+    search_fields = [
+        'nombre', 
+        'sku', 
+        'descripcion', 
+        'marca__nombre'
+    ]
+    
+    # Campos por los que se puede ordenar
+    ordering_fields = [
+        'fecha_registro', 
+        'precio_final',
+        'nombre'
+    ]
 
     def get_serializer_class(self):
         if self.action == 'list':
