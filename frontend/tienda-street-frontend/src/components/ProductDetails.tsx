@@ -1,47 +1,30 @@
 import { useState } from 'react';
 import type { IProducto } from '../interfaces/productos';
-import { ShoppingCart, MessageCircle } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
+import { ChevronDown } from 'lucide-react';
 
 interface ProductDetailsProps {
   producto: IProducto;
 }
 
 function ProductDetails({ producto }: ProductDetailsProps) {
-  const [tallaSeleccionada, setTallaSeleccionada] = useState<string | null>(null);
+  const [tallaSeleccionada, setTallaSeleccionada] = useState<string>('');
   const [cantidad, setCantidad] = useState(1);
   const [mostrarMensaje, setMostrarMensaje] = useState(false);
   const { addToCart } = useCart();
 
-  // Obtener el stock de la talla seleccionada
+  // Lógica interna de stock (oculta al usuario visualmente)
   const stockDisponible = tallaSeleccionada
     ? producto.talla_stock.find((ts) => ts.talla === tallaSeleccionada)?.stock || 0
     : 0;
 
-  // Generar mensaje de WhatsApp
-  const generarMensajeWhatsApp = () => {
-    if (!tallaSeleccionada) {
-      alert('Por favor selecciona una talla');
-      return;
-    }
-
-    const total = (parseFloat(producto.precio_final) * cantidad).toFixed(2);
-    const mensaje = `Hola, quiero comprar:
-- Producto: ${producto.nombre}
-- Marca: ${producto.marca}
-- Talla: ${tallaSeleccionada}
-- Cantidad: ${cantidad}
-- Precio unitario: S/ ${producto.precio_final}
-- Total: S/ ${total}`;
-
-    const numeroWhatsApp = '51975738709';
-    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
-    window.open(urlWhatsApp, '_blank');
-  };
-
   const handleAgregarCarrito = () => {
     if (!tallaSeleccionada) {
-      alert('Por favor selecciona una talla');
+      // Pequeña animación o alerta visual si no hay talla
+      const selectElement = document.getElementById('talla-select');
+      selectElement?.focus();
+      selectElement?.classList.add('ring-2', 'ring-red-500');
+      setTimeout(() => selectElement?.classList.remove('ring-2', 'ring-red-500'), 1000);
       return;
     }
 
@@ -58,143 +41,126 @@ function ProductDetails({ producto }: ProductDetailsProps) {
     });
 
     setMostrarMensaje(true);
-    setTimeout(() => setMostrarMensaje(false), 2000);
+    setCantidad(1); // Resetear cantidad tras añadir
+    setTimeout(() => setMostrarMensaje(false), 3000);
   };
 
+  // Cadena de atributos formateada
+  const atributosHeader = [producto.temporada, producto.marca, producto.categoria, producto.genero]
+    .filter(Boolean)
+    .join(' / ');
+
   return (
-    <div className="flex flex-col space-y-6 p-5 lg:py-2 lg:px-3">
-      {/* Marca */}
+    <div className="flex flex-col space-y-6 p-5 lg:py-4 lg:px-0 h-full">
+      {/* 1. Atributos (Breadcrumb style) */}
       <div>
-        <p className="text-sm text-gray-500 uppercase tracking-wide">{producto.marca}</p>
+        <p className="text-xs md:text-[12px] text-gray-400 tracking-wide mb-2.5">
+          {atributosHeader}
+        </p>
+
+        {/* 2. Título */}
+        <h1 className="text-3xl md:text-3xl font-bold text-gray-900 tracking-tight leading-none mb-3">
+          {producto.nombre}
+        </h1>
+
+        {/* 3. Precio */}
+        <div className="flex items-center gap-4">
+          {producto.en_oferta ? (
+            <>
+              <span className="text-2xl font-bold text-gray-900">S/ {producto.precio_final}</span>
+              <span className="text-lg text-gray-400 line-through font-medium">
+                S/ {producto.precio_base}
+              </span>
+            </>
+          ) : (
+            <span className="text-2xl font-bold text-gray-900">S/ {producto.precio_final}</span>
+          )}
+        </div>
       </div>
 
-      {/* Nombre */}
-      <h1 className="text-3xl font-bold text-gray-900">{producto.nombre}</h1>
-
-      {/* Precio */}
-      <div className="space-y-2">
-        {producto.en_oferta ? (
-          <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold text-gray-900">S/ {producto.precio_final}</span>
-            <span className="text-xl text-gray-500 line-through">S/ {producto.precio_base}</span>
-            <span className="text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
-              {producto.descuento_porcentaje}% OFF
-            </span>
-          </div>
-        ) : (
-          <span className="text-3xl font-bold text-gray-900">S/ {producto.precio_final}</span>
-        )}
-      </div>
-
-      {/* Descripción */}
+      {/* 4. Descripción */}
       {producto.descripcion && (
-        <div className="border-t border-b border-gray-200 py-4 text-[13px] ">
-          <p className="text-gray-700 leading-relaxed">{producto.descripcion}</p>
+        <div className="text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+          <p>{producto.descripcion}</p>
         </div>
       )}
 
-      {/* Info adicional */}
-      <div className="flex justify-between items-center text-sm">
-        <div>
-          <span className="text-gray-500">Categoría:</span>
-          <p className="font-medium text-gray-900">{producto.categoria}</p>
-        </div>
-        <div>
-          <span className="text-gray-500">Género:</span>
-          <p className="font-medium text-gray-900">{producto.genero}</p>
-        </div>
-        <div>
-          <span className="text-gray-500">Temporada:</span>
-          <p className="font-medium text-gray-900">{producto.temporada}</p>
-        </div>
-        <div>
-        </div>
-      </div>
-
-      {/* Selector de tallas */}
-      <div className="space-y-3 pt-3">
-        <label className="block text-sm font-medium text-gray-900">
-          Selecciona tu talla
-          {tallaSeleccionada && (
-            <span className="ml-2 text-gray-500">
-              (Stock disponible: {stockDisponible})
-            </span>
-          )}
-        </label>
-        <div className="grid grid-cols-6 gap-2">
-          {producto.talla_stock.map((ts) => (
-            <button
-              key={ts.id}
-              onClick={() => {
-                setTallaSeleccionada(ts.talla);
-                setCantidad(1);
+      <div className="pt-4 space-y-6">
+        {/* 5. Selector de Talla */}
+        <div className="space-y-2">
+          <label
+            htmlFor="talla-select"
+            className="text-xs font-bold text-gray-900 uppercase tracking-wide"
+          >
+            Talla
+          </label>
+          <div className="relative">
+            <select
+              id="talla-select"
+              value={tallaSeleccionada}
+              onChange={(e) => {
+                setTallaSeleccionada(e.target.value);
+                setCantidad(1); // Reset cantidad al cambiar talla
               }}
-              disabled={ts.stock === 0}
-              className={`
-                py-2 px-4 text-sm font-medium rounded-lg border-2
-                ${ts.stock === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : ''}
-                ${
-                  tallaSeleccionada === ts.talla
-                    ? 'border-black bg-black text-white'
-                    : 'border-gray-300 hover:border-black'
-                }
-              `}
+              className="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-none focus:outline-none focus:border-black focus:ring-0 transition-colors text-sm font-medium cursor-pointer uppercase"
             >
-              {ts.talla}
-            </button>
-          ))}
+              <option value="" disabled>
+                Elige una opción
+              </option>
+              {producto.talla_stock.map((ts) => (
+                <option key={ts.id} value={ts.talla} disabled={ts.stock === 0}>
+                  {ts.talla} {ts.stock === 0 ? '(Agotado)' : ''}
+                </option>
+              ))}
+            </select>
+            {/* Icono custom para el select */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+              <ChevronDown size={16} />
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Selector de cantidad */}
-      {tallaSeleccionada && (
-        <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-900">Cantidad</label>
-          <div className="flex items-center gap-3">
+        {/* 6. Fila de Cantidad y Botón de Compra */}
+        <div className="flex gap-4 h-12">
+          {/* Input Cantidad */}
+          <div className="flex items-center border border-gray-300 w-24 shrink-0 ">
             <button
               onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-              className="w-10 h-10 rounded-lg border-2 border-gray-300 hover:border-black"
+              className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:text-black transition-colors"
+              disabled={!tallaSeleccionada}
             >
               -
             </button>
-            <span className="w-12 text-center font-medium text-lg">{cantidad}</span>
+            <div className="flex-1 h-full flex items-center justify-center text-sm font-bold text-gray-900 border-x border-gray-100">
+              {cantidad}
+            </div>
             <button
               onClick={() => setCantidad(Math.min(stockDisponible, cantidad + 1))}
-              disabled={cantidad >= stockDisponible}
-              className="w-10 h-10 rounded-lg border-2 border-gray-300 hover:border-black disabled:opacity-50"
+              disabled={!tallaSeleccionada || cantidad >= stockDisponible}
+              className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-50 hover:text-black transition-colors disabled:opacity-30"
             >
               +
             </button>
           </div>
+
+          {/* Botón Añadir */}
+          <button
+            onClick={handleAgregarCarrito}
+            disabled={!tallaSeleccionada || stockDisponible === 0}
+            className="flex-1 bg-gray-900 text-white text-sm font-bold uppercase tracking-widest hover:bg-black transition-all disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            {stockDisponible === 0 && tallaSeleccionada ? 'Agotado' : 'Añadir al Carrito'}
+          </button>
         </div>
-      )}
 
-      {/* Mensaje de agregado al carrito */}
-      {mostrarMensaje && (
-        <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm font-medium">
-          ✓ Producto agregado al carrito
+        {/* Mensaje Feedback */}
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${mostrarMensaje ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}
+        >
+          <div className="text-gray-900 text-[12px] uppercase py-1 px-4 text-center tracking-wide">
+            ✓ Producto añadido al carrito correctamente
+          </div>
         </div>
-      )}
-
-      {/* Botones de acción */}
-      <div className="space-y-3 pt-4 flex gap-5 max-h-17">
-        <button
-          onClick={handleAgregarCarrito}
-          disabled={!tallaSeleccionada}
-          className="w-full h-full flex items-center justify-center gap-2 bg-black text-white py-4 rounded-lg font-medium hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
-          <ShoppingCart className="w-5 h-5" />
-          Añadir al Carrito
-        </button>
-
-        <button
-          onClick={generarMensajeWhatsApp}
-          disabled={!tallaSeleccionada}
-          className="w-full h-full flex items-center justify-center gap-2 bg-gray-600 text-white py-4 rounded-lg font-medium hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
-          <MessageCircle className="w-5 h-5" />
-          Realizar Pedido
-        </button>
       </div>
     </div>
   );

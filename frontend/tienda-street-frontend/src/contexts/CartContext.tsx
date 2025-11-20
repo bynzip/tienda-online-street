@@ -33,6 +33,8 @@ export const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  // 1. Agregamos un estado para saber si ya leímos el localStorage
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Cargar carrito del localStorage al montar
   useEffect(() => {
@@ -40,10 +42,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (savedCart) {
       try {
         const parsedItems = JSON.parse(savedCart);
-        // Migrar items antiguos que no tengan la estructura nueva
+        // Migrar items antiguos...
         const migratedItems = parsedItems.map((item: any) => {
           if (!item.productId) {
-            // Extraer productId del id (formato: productId-talla)
             const parts = item.id.split('-');
             const productId = parts.slice(0, -1).join('-');
             return {
@@ -59,12 +60,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         console.error('Error al cargar carrito:', e);
       }
     }
+    // 2. Marcamos como inicializado una vez que terminamos de leer (haya datos o no)
+    setIsInitialized(true);
   }, []);
 
   // Guardar carrito en localStorage cuando cambia
   useEffect(() => {
+    // 3. IMPORTANTE: Si no está inicializado, NO guardamos nada.
+    // Esto evita que el estado inicial [] sobrescriba tus datos guardados.
+    if (!isInitialized) return;
+
     localStorage.setItem('cart', JSON.stringify(items));
-  }, [items]);
+  }, [items, isInitialized]); // Agregamos isInitialized a las dependencias
 
   const addToCart = (newItem: CartItem) => {
     setItems((prevItems) => {
@@ -72,12 +79,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         (item) => item.productId === newItem.productId && item.talla === newItem.talla
       );
       if (existingItem) {
-        const maxStock = newItem.tallaStockInfo.find((ts) => ts.talla === newItem.talla)?.stock || 0;
+        const maxStock =
+          newItem.tallaStockInfo.find((ts) => ts.talla === newItem.talla)?.stock || 0;
         const newCantidad = Math.min(existingItem.cantidad + newItem.cantidad, maxStock);
         return prevItems.map((item) =>
-          item.id === existingItem.id
-            ? { ...item, cantidad: newCantidad }
-            : item
+          item.id === existingItem.id ? { ...item, cantidad: newCantidad } : item
         );
       }
       return [...prevItems, newItem];
@@ -109,7 +115,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prevItems) =>
       prevItems.map((item) => {
         if (item.id === id) {
-          const newStockDisponible = item.tallaStockInfo.find((ts) => ts.talla === talla)?.stock || 0;
+          const newStockDisponible =
+            item.tallaStockInfo.find((ts) => ts.talla === talla)?.stock || 0;
           const newCantidad = Math.min(item.cantidad, newStockDisponible);
           return {
             ...item,
@@ -128,10 +135,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const totalItems = items.reduce((sum, item) => sum + item.cantidad, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + parseFloat(item.precio) * item.cantidad,
-    0
-  );
+  const totalPrice = items.reduce((sum, item) => sum + parseFloat(item.precio) * item.cantidad, 0);
 
   return (
     <CartContext.Provider
