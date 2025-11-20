@@ -16,7 +16,7 @@ function ProductGallery({ imagenes, nombre }: ProductGalleryProps) {
 
   return (
     // Eliminamos h-[85vh] y overflow. Dejamos que crezca naturalmente.
-    <div className="flex flex-col gap-1 w-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-1 w-full lg:py-4">
       {imagenes.map((imagen, index) => (
         <div key={imagen.id} className="w-full relative">
           <img

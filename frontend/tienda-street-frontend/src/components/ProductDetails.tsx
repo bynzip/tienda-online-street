@@ -51,7 +51,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
     .join(' / ');
 
   return (
-    <div className="flex flex-col space-y-6 p-5 lg:py-4 lg:px-0 h-full">
+    <div className="flex flex-col space-y-6 p-5 lg:pt-2 lg:px-0 h-full">
       {/* 1. Atributos (Breadcrumb style) */}
       <div>
         <p className="text-xs md:text-[12px] text-gray-400 tracking-wide mb-2.5">
@@ -59,7 +59,7 @@ function ProductDetails({ producto }: ProductDetailsProps) {
         </p>
 
         {/* 2. Título */}
-        <h1 className="text-3xl md:text-3xl font-bold text-gray-900 tracking-tight leading-none mb-3">
+        <h1 className="text-3xl md:text-3xl font-semibold text-gray-900 tracking-tight leading-none mb-3">
           {producto.nombre}
         </h1>
 
@@ -67,20 +67,20 @@ function ProductDetails({ producto }: ProductDetailsProps) {
         <div className="flex items-center gap-4">
           {producto.en_oferta ? (
             <>
-              <span className="text-2xl font-bold text-gray-900">S/ {producto.precio_final}</span>
-              <span className="text-lg text-gray-400 line-through font-medium">
+              <span className="text-xl text-gray-900">S/ {producto.precio_final}</span>
+              <span className="text-[14px] text-gray-600 line-through">
                 S/ {producto.precio_base}
               </span>
             </>
           ) : (
-            <span className="text-2xl font-bold text-gray-900">S/ {producto.precio_final}</span>
+            <span className="text-xl text-gray-900">S/ {producto.precio_final}</span>
           )}
         </div>
       </div>
 
       {/* 4. Descripción */}
       {producto.descripcion && (
-        <div className="text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+        <div className="text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-4 text-justify">
           <p>{producto.descripcion}</p>
         </div>
       )}
