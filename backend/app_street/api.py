@@ -41,8 +41,10 @@ class ProductoViewSet(viewsets.ModelViewSet):
     search_fields = [
         'nombre', 
         'sku', 
-        'descripcion', 
-        'marca__nombre'
+        'categoria__nombre',  # <--- Doble guion bajo para buscar dentro de la Foranea
+        'marca__nombre',      # <--- Igual para marca
+        'genero__nombre',     # <--- Igual para genero
+        'temporada__nombre'   # <--- Si también buscas por temporada
     ]
     
     # Campos por los que se puede ordenar

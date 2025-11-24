@@ -50,11 +50,7 @@ function ProductDetailPage() {
       </div>
 
       <div className="pt-2">
-        <ProductCarousel
-          title="Te podría interesar"
-          apiUrl={`/api/productos/${id}/recommend/`}
-          limit={8}
-        />
+        <ProductCarousel title="Te podría interesar" apiUrl={`/api/productos/${id}/recommend/`} />
       </div>
     </div>
   );

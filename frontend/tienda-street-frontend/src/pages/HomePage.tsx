@@ -20,11 +20,7 @@ function HomePage() {
       {/* Hero Section */}
       <HeroSection />
       {recommendApiUrl && (
-        <ProductCarousel
-          title="Recomendado para ti 🛍️"
-          apiUrl={recommendApiUrl}
-          limit={8} // Muestra los 8 productos como pediste
-        />
+        <ProductCarousel title="Recomendado para ti 🛍️" apiUrl={recommendApiUrl} />
       )}
 
       {/* Categorías Zapatillas */}

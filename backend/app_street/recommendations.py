@@ -36,7 +36,7 @@ class RecommendationEngine:
             self.is_initialized = False
 
     def load_product_data(self):
-        """Carga todos los productos desde la BD en un DataFrame."""
+        # Carga todos los productos desde la BD en un DataFrame.
         from .models import Producto
 
         productos = Producto.objects.select_related(
@@ -63,22 +63,25 @@ class RecommendationEngine:
         logger.info(f"Datos cargados: {len(self.df)} productos")
 
     def create_feature_pipeline(self):
-        """
-        Crea un pipeline de features usando ColumnTransformer.
-        - Texto: TfidfVectorizer
-        - Categorías: OneHotEncoder
-        - Números: MinMaxScaler
-        """
+        # Crea un pipeline de features usando ColumnTransformer.
         # Pipeline de transformaciones
         preprocessor = ColumnTransformer(
             transformers=[
-                # Texto: nombre + descripción
+                # Nombre
                 ('tfidf_text', TfidfVectorizer(
-                    max_features=50,
+                    max_features=60,
                     stop_words='english',
                     lowercase=True,
                     analyzer='word'
-                ), 'nombre'),  # Podría incluir descripción con concatenación
+                ), 'nombre'),
+
+                # Descripción
+                ('tfidf_descripcion', TfidfVectorizer(
+                    max_features=40,
+                    stop_words='english',
+                    lowercase=True,
+                    analyzer='word'
+                ), 'descripcion'),
 
                 # Categorías
                 ('onehot_cat', OneHotEncoder(
@@ -105,17 +108,7 @@ class RecommendationEngine:
             logger.error(f"Error en el pipeline de features: {e}")
             raise
 
-    def get_recommendations(self, product_id: str, n: int = 8):
-        """
-        Obtiene las N recomendaciones más similares para un producto.
-
-        Args:
-            product_id: UUID del producto
-            n: Número de recomendaciones (default 8)
-
-        Returns:
-            Lista de UUIDs de productos similares (ordenados por similitud)
-        """
+    def get_recommendations(self, product_id: str, n: int = 12):
         if not self.is_initialized:
             logger.warning("Motor de recomendaciones no inicializado")
             return []
@@ -135,8 +128,8 @@ class RecommendationEngine:
 
         # Convertir índices a UUIDs
         recommended_ids = [
-            self.index_to_product_id[idx]
-            for idx in similar_indices
+            self.index_to_product_id[idx] 
+            for idx in similar_indices 
             if idx in self.index_to_product_id
         ]
 
